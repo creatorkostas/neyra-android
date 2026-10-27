@@ -1,0 +1,424 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-27T23:18:57.184100+00:00",
+  "title": "Design System: Neyra Android",
+  "extensions": {
+    "colorMeta": {
+      "light-primary": {
+        "role": "primary",
+        "displayName": "Light Primary",
+        "tonalRamp": [
+          "oklch(15% 0.0754 266.77)",
+          "oklch(26% 0.0754 266.77)",
+          "oklch(38% 0.0754 266.77)",
+          "oklch(49% 0.0754 266.77)",
+          "oklch(61% 0.0754 266.77)",
+          "oklch(72% 0.0754 266.77)",
+          "oklch(84% 0.0754 266.77)",
+          "oklch(95% 0.0754 266.77)"
+        ]
+      },
+      "light-on-primary": {
+        "role": "primary",
+        "displayName": "Light On Primary",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "light-primary-container": {
+        "role": "primary",
+        "displayName": "Light Primary Container",
+        "tonalRamp": [
+          "oklch(15% 0.0320 274.11)",
+          "oklch(26% 0.0320 274.11)",
+          "oklch(38% 0.0320 274.11)",
+          "oklch(49% 0.0320 274.11)",
+          "oklch(61% 0.0320 274.11)",
+          "oklch(72% 0.0320 274.11)",
+          "oklch(84% 0.0320 274.11)",
+          "oklch(95% 0.0320 274.11)"
+        ]
+      },
+      "light-on-primary-container": {
+        "role": "primary",
+        "displayName": "Light On Primary Container",
+        "tonalRamp": [
+          "oklch(15% 0.0679 265.64)",
+          "oklch(26% 0.0679 265.64)",
+          "oklch(38% 0.0679 265.64)",
+          "oklch(49% 0.0679 265.64)",
+          "oklch(61% 0.0679 265.64)",
+          "oklch(72% 0.0679 265.64)",
+          "oklch(84% 0.0679 265.64)",
+          "oklch(95% 0.0679 265.64)"
+        ]
+      },
+      "light-background": {
+        "role": "neutral",
+        "displayName": "Light Background",
+        "tonalRamp": [
+          "oklch(15% 0.0041 91.45)",
+          "oklch(26% 0.0041 91.45)",
+          "oklch(38% 0.0041 91.45)",
+          "oklch(49% 0.0041 91.45)",
+          "oklch(61% 0.0041 91.45)",
+          "oklch(72% 0.0041 91.45)",
+          "oklch(84% 0.0041 91.45)",
+          "oklch(95% 0.0041 91.45)"
+        ]
+      },
+      "light-surface": {
+        "role": "neutral",
+        "displayName": "Light Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0041 91.45)",
+          "oklch(26% 0.0041 91.45)",
+          "oklch(38% 0.0041 91.45)",
+          "oklch(49% 0.0041 91.45)",
+          "oklch(61% 0.0041 91.45)",
+          "oklch(72% 0.0041 91.45)",
+          "oklch(84% 0.0041 91.45)",
+          "oklch(95% 0.0041 91.45)"
+        ]
+      },
+      "light-on-surface": {
+        "role": "neutral",
+        "displayName": "Light On Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0361 265.56)",
+          "oklch(26% 0.0361 265.56)",
+          "oklch(38% 0.0361 265.56)",
+          "oklch(49% 0.0361 265.56)",
+          "oklch(61% 0.0361 265.56)",
+          "oklch(72% 0.0361 265.56)",
+          "oklch(84% 0.0361 265.56)",
+          "oklch(95% 0.0361 265.56)"
+        ]
+      },
+      "light-secondary": {
+        "role": "secondary",
+        "displayName": "Light Secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0311 264.23)",
+          "oklch(26% 0.0311 264.23)",
+          "oklch(38% 0.0311 264.23)",
+          "oklch(49% 0.0311 264.23)",
+          "oklch(61% 0.0311 264.23)",
+          "oklch(72% 0.0311 264.23)",
+          "oklch(84% 0.0311 264.23)",
+          "oklch(95% 0.0311 264.23)"
+        ]
+      },
+      "light-secondary-container": {
+        "role": "secondary",
+        "displayName": "Light Secondary Container",
+        "tonalRamp": [
+          "oklch(15% 0.0201 267.28)",
+          "oklch(26% 0.0201 267.28)",
+          "oklch(38% 0.0201 267.28)",
+          "oklch(49% 0.0201 267.28)",
+          "oklch(61% 0.0201 267.28)",
+          "oklch(72% 0.0201 267.28)",
+          "oklch(84% 0.0201 267.28)",
+          "oklch(95% 0.0201 267.28)"
+        ]
+      },
+      "light-on-secondary-container": {
+        "role": "secondary",
+        "displayName": "Light On Secondary Container",
+        "tonalRamp": [
+          "oklch(15% 0.0605 264.26)",
+          "oklch(26% 0.0605 264.26)",
+          "oklch(38% 0.0605 264.26)",
+          "oklch(49% 0.0605 264.26)",
+          "oklch(61% 0.0605 264.26)",
+          "oklch(72% 0.0605 264.26)",
+          "oklch(84% 0.0605 264.26)",
+          "oklch(95% 0.0605 264.26)"
+        ]
+      },
+      "dark-primary": {
+        "role": "primary",
+        "displayName": "Dark Primary",
+        "tonalRamp": [
+          "oklch(15% 0.0580 270.97)",
+          "oklch(26% 0.0580 270.97)",
+          "oklch(38% 0.0580 270.97)",
+          "oklch(49% 0.0580 270.97)",
+          "oklch(61% 0.0580 270.97)",
+          "oklch(72% 0.0580 270.97)",
+          "oklch(84% 0.0580 270.97)",
+          "oklch(95% 0.0580 270.97)"
+        ]
+      },
+      "dark-on-primary": {
+        "role": "primary",
+        "displayName": "Dark On Primary",
+        "tonalRamp": [
+          "oklch(15% 0.0727 265.70)",
+          "oklch(26% 0.0727 265.70)",
+          "oklch(38% 0.0727 265.70)",
+          "oklch(49% 0.0727 265.70)",
+          "oklch(61% 0.0727 265.70)",
+          "oklch(72% 0.0727 265.70)",
+          "oklch(84% 0.0727 265.70)",
+          "oklch(95% 0.0727 265.70)"
+        ]
+      },
+      "dark-primary-container": {
+        "role": "primary",
+        "displayName": "Dark Primary Container",
+        "tonalRamp": [
+          "oklch(15% 0.0754 266.77)",
+          "oklch(26% 0.0754 266.77)",
+          "oklch(38% 0.0754 266.77)",
+          "oklch(49% 0.0754 266.77)",
+          "oklch(61% 0.0754 266.77)",
+          "oklch(72% 0.0754 266.77)",
+          "oklch(84% 0.0754 266.77)",
+          "oklch(95% 0.0754 266.77)"
+        ]
+      },
+      "dark-on-primary-container": {
+        "role": "primary",
+        "displayName": "Dark On Primary Container",
+        "tonalRamp": [
+          "oklch(15% 0.0320 274.11)",
+          "oklch(26% 0.0320 274.11)",
+          "oklch(38% 0.0320 274.11)",
+          "oklch(49% 0.0320 274.11)",
+          "oklch(61% 0.0320 274.11)",
+          "oklch(72% 0.0320 274.11)",
+          "oklch(84% 0.0320 274.11)",
+          "oklch(95% 0.0320 274.11)"
+        ]
+      },
+      "dark-background": {
+        "role": "neutral",
+        "displayName": "Dark Background",
+        "tonalRamp": [
+          "oklch(15% 0.0189 266.09)",
+          "oklch(26% 0.0189 266.09)",
+          "oklch(38% 0.0189 266.09)",
+          "oklch(49% 0.0189 266.09)",
+          "oklch(61% 0.0189 266.09)",
+          "oklch(72% 0.0189 266.09)",
+          "oklch(84% 0.0189 266.09)",
+          "oklch(95% 0.0189 266.09)"
+        ]
+      },
+      "dark-surface": {
+        "role": "neutral",
+        "displayName": "Dark Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0189 266.09)",
+          "oklch(26% 0.0189 266.09)",
+          "oklch(38% 0.0189 266.09)",
+          "oklch(49% 0.0189 266.09)",
+          "oklch(61% 0.0189 266.09)",
+          "oklch(72% 0.0189 266.09)",
+          "oklch(84% 0.0189 266.09)",
+          "oklch(95% 0.0189 266.09)"
+        ]
+      },
+      "dark-on-surface": {
+        "role": "neutral",
+        "displayName": "Dark On Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0116 264.51)",
+          "oklch(26% 0.0116 264.51)",
+          "oklch(38% 0.0116 264.51)",
+          "oklch(49% 0.0116 264.51)",
+          "oklch(61% 0.0116 264.51)",
+          "oklch(72% 0.0116 264.51)",
+          "oklch(84% 0.0116 264.51)",
+          "oklch(95% 0.0116 264.51)"
+        ]
+      },
+      "dark-secondary": {
+        "role": "secondary",
+        "displayName": "Dark Secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0305 262.52)",
+          "oklch(26% 0.0305 262.52)",
+          "oklch(38% 0.0305 262.52)",
+          "oklch(49% 0.0305 262.52)",
+          "oklch(61% 0.0305 262.52)",
+          "oklch(72% 0.0305 262.52)",
+          "oklch(84% 0.0305 262.52)",
+          "oklch(95% 0.0305 262.52)"
+        ]
+      },
+      "dark-secondary-container": {
+        "role": "secondary",
+        "displayName": "Dark Secondary Container",
+        "tonalRamp": [
+          "oklch(15% 0.0511 264.92)",
+          "oklch(26% 0.0511 264.92)",
+          "oklch(38% 0.0511 264.92)",
+          "oklch(49% 0.0511 264.92)",
+          "oklch(61% 0.0511 264.92)",
+          "oklch(72% 0.0511 264.92)",
+          "oklch(84% 0.0511 264.92)",
+          "oklch(95% 0.0511 264.92)"
+        ]
+      },
+      "dark-on-secondary-container": {
+        "role": "secondary",
+        "displayName": "Dark On Secondary Container",
+        "tonalRamp": [
+          "oklch(15% 0.0201 267.28)",
+          "oklch(26% 0.0201 267.28)",
+          "oklch(38% 0.0201 267.28)",
+          "oklch(49% 0.0201 267.28)",
+          "oklch(61% 0.0201 267.28)",
+          "oklch(72% 0.0201 267.28)",
+          "oklch(84% 0.0201 267.28)",
+          "oklch(95% 0.0201 267.28)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline-large": {
+        "displayName": "Headline Large",
+        "purpose": "Native Material 3 role; see DESIGN.md hierarchy."
+      },
+      "title-large": {
+        "displayName": "Title Large",
+        "purpose": "Native Material 3 role; see DESIGN.md hierarchy."
+      },
+      "title-medium": {
+        "displayName": "Title Medium",
+        "purpose": "Native Material 3 role; see DESIGN.md hierarchy."
+      },
+      "body-large": {
+        "displayName": "Body Large",
+        "purpose": "Native Material 3 role; see DESIGN.md hierarchy."
+      },
+      "body-medium": {
+        "displayName": "Body Medium",
+        "purpose": "Native Material 3 role; see DESIGN.md hierarchy."
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "Native Material 3 role; see DESIGN.md hierarchy."
+      },
+      "label-large": {
+        "displayName": "Label Large",
+        "purpose": "Native Material 3 role; see DESIGN.md hierarchy."
+      }
+    },
+    "shadows": [],
+    "motion": [],
+    "breakpoints": [
+      {
+        "name": "navigation-rail",
+        "value": "600dp"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Send button",
+      "kind": "button",
+      "description": "Illustrative light-theme translation of native Material 3 send button. Native Compose defaults remain authoritative.",
+      "html": "<button class=\"ds-send\">Send to computer</button>",
+      "css": ".ds-send {background:#394A75;color:#FFFFFF;border:none;border-radius:999px;min-height:48px;padding:10px 24px;font:500 14px/20px sans-serif;} .ds-send:hover {filter:brightness(.95);} .ds-send:focus-visible {outline:2px solid #394A75;outline-offset:3px;} .ds-send:active {filter:brightness(.9);}",
+      "refersTo": "send"
+    },
+    {
+      "name": "Speak button",
+      "kind": "button",
+      "description": "Illustrative light-theme translation of native Material 3 speak button. Native Compose defaults remain authoritative.",
+      "html": "<button class=\"ds-speak\">Speak to Neyra</button>",
+      "css": ".ds-speak {background:#DCE2F0;color:#253454;border:none;border-radius:999px;min-height:64px;padding:10px 24px;font:500 14px/20px sans-serif;} .ds-speak:hover {filter:brightness(.95);} .ds-speak:focus-visible {outline:2px solid #394A75;outline-offset:3px;} .ds-speak:active {filter:brightness(.9);}",
+      "refersTo": "speak"
+    },
+    {
+      "name": "Outlined button",
+      "kind": "button",
+      "description": "Illustrative light-theme translation of native Material 3 outlined button. Native Compose defaults remain authoritative.",
+      "html": "<button class=\"ds-outlined\">Scan again</button>",
+      "css": ".ds-outlined {background:transparent;color:#394A75;border:1px solid #79747E;border-radius:999px;min-height:48px;padding:10px 24px;font:500 14px/20px sans-serif;} .ds-outlined:hover {filter:brightness(.95);} .ds-outlined:focus-visible {outline:2px solid #394A75;outline-offset:3px;} .ds-outlined:active {filter:brightness(.9);}"
+    },
+    {
+      "name": "Text button",
+      "kind": "button",
+      "description": "Illustrative light-theme translation of native Material 3 text button. Native Compose defaults remain authoritative.",
+      "html": "<button class=\"ds-text\">Change computer</button>",
+      "css": ".ds-text {background:transparent;color:#394A75;border:none;border-radius:999px;min-height:48px;padding:10px 24px;font:500 14px/20px sans-serif;} .ds-text:hover {filter:brightness(.95);} .ds-text:focus-visible {outline:2px solid #394A75;outline-offset:3px;} .ds-text:active {filter:brightness(.9);}"
+    },
+    {
+      "name": "Draft field",
+      "kind": "input",
+      "description": "Illustrative light-theme translation of native Material 3 draft field. Native Compose defaults remain authoritative.",
+      "html": "<label class=\"ds-field\">Speak or type your request<textarea aria-label=\"Draft\"></textarea></label>",
+      "css": ".ds-field {display:block;color:#49454F;font:400 16px/24px sans-serif;} .ds-field textarea {display:block;width:95%;min-height:96px;border:1px solid #79747E;border-radius:4px;background:#FAF9F6;color:#1B2335;padding:16px;font:400 16px/24px sans-serif;} .ds-field textarea:hover {border-color:#1B2335;} .ds-field textarea:focus-visible {outline:2px solid #394A75;}"
+    },
+    {
+      "name": "Mode chip",
+      "kind": "chip",
+      "description": "Illustrative light-theme translation of native Material 3 mode chip. Native Compose defaults remain authoritative.",
+      "html": "<button class=\"ds-chip\" aria-pressed=\"true\">Note</button>",
+      "css": ".ds-chip {background:#DCE2F0;color:#253454;border:0;border-radius:8px;min-height:32px;padding:6px 16px;font:500 14px/20px sans-serif;} .ds-chip:hover {filter:brightness(.95);} .ds-chip:focus-visible {outline:2px solid #394A75;outline-offset:3px;} .ds-chip:active {filter:brightness(.9);}"
+    },
+    {
+      "name": "Destination panel",
+      "kind": "card",
+      "description": "Illustrative light-theme translation of native Material 3 destination panel. Native Compose defaults remain authoritative.",
+      "html": "<section class=\"ds-panel\"><h2>Synthetic workstation</h2><p>Connected on your local network</p></section>",
+      "css": ".ds-panel {background:#DCE2F9;color:#162447;border-radius:12px;padding:20px;font:400 14px/20px sans-serif;} .ds-panel h2 {margin:0 0 8px;font:400 22px/28px sans-serif;} .ds-panel p {margin:0;}",
+      "refersTo": "destination-panel"
+    },
+    {
+      "name": "Destination navigation",
+      "kind": "nav",
+      "description": "Illustrative light-theme translation of native Material 3 destination navigation. Native Compose defaults remain authoritative.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Destinations\"><button aria-current=\"page\">Capture</button><button>Computers</button><button>Inbox</button></nav>",
+      "css": ".ds-nav {display:flex;background:#F3EDF7;padding:12px;gap:8px;} .ds-nav button {flex:1;min-height:48px;border:0;background:transparent;color:#49454F;font:500 14px/20px sans-serif;border-radius:24px;} .ds-nav button[aria-current] {background:#DCE2F0;color:#253454;} .ds-nav button:hover {filter:brightness(.95);} .ds-nav button:focus-visible {outline:2px solid #394A75;} .ds-nav button:active {filter:brightness(.9);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Your voice, your computer",
+    "overview": "Neyra\u2019s calm ink and warm-surface identity becomes a native Material 3 remote for the user\u2019s own computers. System typography, quiet tonal grouping and familiar controls keep capture and connection state readable.\n\nThe selected computer is visible before capture. Speech produces editable text rather than silently dispatching an action; local-network and notification limits remain explicit.",
+    "keyCharacteristics": [
+      "Ink accents on warm neutral surfaces.",
+      "Native Material 3 controls and system typography.",
+      "Visible destination and honest connection state."
+    ],
+    "rules": [
+      {
+        "name": "The Visible Destination Rule",
+        "body": "Keep the selected computer and connection state visible before capture; name the destination in the send action.",
+        "section": "colors"
+      },
+      {
+        "name": "The Native Type Rule",
+        "body": "Use Material typography roles and Android font scaling rather than fixed pixel text or a decorative display face.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tonal Grouping Rule",
+        "body": "Use native tonal surfaces for grouping; do not add decorative hard shadows to the destination panel.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do preserve system font scaling, scrolling, IME clearance and native touch targets.",
+      "Do retain draft text, mode and speech target across destination changes through SaveableStateHolder.",
+      "Do keep the speech-provider privacy disclosure and notification-delay limits readable."
+    ],
+    "donts": [
+      "Don't treat discovery as pairing or an offline computer as connected.",
+      "Don't send a spoken draft to a changed computer until it is reviewed/edited or the original destination is restored.",
+      "Don't replace native controls with web styling or introduce custom entrance animation."
+    ]
+  }
+}
