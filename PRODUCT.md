@@ -120,3 +120,7 @@ The user explicitly requires a clean opening screen: a dropdown at the top to
 select a computer, then a Speak button below. All secondary capture controls and
 information belong on other screens. Preserve feature access through navigation;
 recording review and shared text belong in Compose.
+
+The latest confirmed refinement places a smaller Neyra wordmark beside the PC
+selector in a centered header. Keep the Speak-first workflow while giving controls
+custom styling and responsive feedback inspired by Apple Design principles.

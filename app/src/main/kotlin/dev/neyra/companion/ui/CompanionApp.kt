@@ -2,6 +2,11 @@ package dev.neyra.companion.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -88,14 +93,27 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
                         onClick = { destination = item }, icon = { Icon(item.icon, null) }, label = { Text(item.label) }, colors = NavigationRailItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.onPrimary, selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer, indicatorColor = MaterialTheme.colorScheme.primary, unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer, unselectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer)) }
                 }
                 Scaffold(modifier = Modifier.weight(1f),
-                    topBar = { TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer, titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer, actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer), title = { Text("neyra", style = MaterialTheme.typography.titleLarge) }, actions = {
+                    topBar = { if (destination == Destination.CAPTURE) Surface(color = MaterialTheme.colorScheme.primaryContainer) { Column(Modifier.statusBarsPadding()) { ComputerHeader(state, model::select, { destination = Destination.DEVICES }) } } else TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer, titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer, actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer), title = { Text("neyra", style = MaterialTheme.typography.titleMedium) }, actions = {
                         if (destination != Destination.CAPTURE) IconButton(onClick = model::refresh, enabled = !state.busy) { Icon(Icons.Outlined.Refresh, "Sync computers") }
                     }) },
                     snackbarHost = { SnackbarHost(snackbar) },
-                    bottomBar = { if (!wide) NavigationBar(containerColor = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer) { Destination.entries.forEach { item ->
-                        NavigationBarItem(selected = destination == item, onClick = { destination = item },
-                            icon = { Icon(item.icon, null) }, label = { Text(item.label) }, colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.onPrimary, selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer, indicatorColor = MaterialTheme.colorScheme.primary, unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer, unselectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer))
-                    } } },
+                    bottomBar = { if (!wide) Box(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).navigationBarsPadding().padding(horizontal = 16.dp, vertical = 10.dp)) {
+                        Surface(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(24.dp)) {
+                            Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 8.dp)) {
+                                Destination.entries.forEach { item ->
+                                    val selected = destination == item
+                                    Column(Modifier.weight(1f).selectable(selected = selected, role = Role.Tab,
+                                        onClick = { destination = item }).padding(vertical = 8.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        Icon(item.icon, null, Modifier.size(22.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = if (selected) 1f else 0.65f))
+                                        Text(item.label, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = if (selected) 1f else 0.75f),
+                                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal))
+                                        Box(Modifier.size(width = 16.dp, height = 3.dp).background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent, RoundedCornerShape(2.dp)))
+                                    }
+                                }
+                            }
+                        }
+                    } },
                 ) { padding ->
                     Box(Modifier.padding(padding).fillMaxSize(), contentAlignment = Alignment.TopCenter) {
                     screenState.SaveableStateProvider(destination.name) {
@@ -106,7 +124,7 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
                             TextButton(onClick = { model.cancelOperation(); onStopSpeech() }) { Text("Stop request") }
                         }
                         when (destination) {
-                            Destination.CAPTURE -> SpeakHome(state, model::select, { destination = Destination.DEVICES }) {
+                            Destination.CAPTURE -> SpeakHome(state) {
                                 onStopSpeech()
                                 if (!state.recording) captureDraft.target.value = state.selectedId
                                 val stopping = state.recording

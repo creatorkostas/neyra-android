@@ -1,33 +1,72 @@
 package dev.neyra.companion.ui
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Mic
-import androidx.compose.material.icons.outlined.Stop
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.neyra.companion.CompanionState
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable fun SpeakHome(state: CompanionState, select: (String) -> Unit, computers: () -> Unit, speak: () -> Unit) {
+@Composable fun ComputerHeader(state: CompanionState, select: (String) -> Unit, computers: () -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { if (!state.recording && !state.busy) expanded = it }) {
-        OutlinedTextField(value = state.selected?.name ?: "Select a computer", onValueChange = {}, readOnly = true,
-            label = { Text("Computer") }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-            modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
-            enabled = !state.recording && !state.busy)
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            state.peers.forEach { peer -> DropdownMenuItem(text = { Text(peer.name) },
-                onClick = { select(peer.id); expanded = false }) }
-            DropdownMenuItem(text = { Text("Manage computers") }, onClick = { expanded = false; computers() })
+    Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+        Text("neyra", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
+        Spacer(Modifier.width(16.dp))
+        Box(Modifier.widthIn(max = 280.dp).weight(1f, fill = false)) {
+            Surface(shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.10f),
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer) {
+                Row(Modifier.clickable(enabled = !state.recording && !state.busy, role = Role.Button,
+                    onClickLabel = "Select computer", onClick = { expanded = !expanded })
+                    .heightIn(min = 48.dp).padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Outlined.Computer, null, Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(state.selected?.name ?: "Select a computer", style = MaterialTheme.typography.labelLarge,
+                        maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, false))
+                    Spacer(Modifier.width(8.dp)); Icon(Icons.Outlined.ExpandMore, null, Modifier.size(18.dp))
+                }
+            }
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                state.peers.forEach { peer -> DropdownMenuItem(text = { Text(peer.name) },
+                    onClick = { select(peer.id); expanded = false }) }
+                DropdownMenuItem(text = { Text("Manage computers") }, onClick = { expanded = false; computers() })
+            }
         }
     }
-    Button(onClick = speak, enabled = state.selected != null && !state.busy,
-        modifier = Modifier.fillMaxWidth().heightIn(min = 76.dp)) {
-        Icon(if (state.recording) Icons.Outlined.Stop else Icons.Outlined.Mic, null, Modifier.size(28.dp))
-        Spacer(Modifier.width(12.dp))
-        Text(if (state.recording) "Stop recording" else "Speak to Neyra", style = MaterialTheme.typography.titleMedium)
+}
+
+@Composable fun SpeakHome(state: CompanionState, speak: () -> Unit) {
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (pressed) 0.96f else 1f,
+        animationSpec = spring(dampingRatio = 1f, stiffness = 700f), label = "Speak press")
+    val enabled = state.selected != null && !state.busy
+    Box(Modifier.fillMaxWidth().padding(top = 64.dp, bottom = 32.dp), contentAlignment = Alignment.Center) {
+        Surface(shape = CircleShape,
+            color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+            shadowElevation = if (enabled && !pressed) 6.dp else 0.dp,
+            modifier = Modifier.sizeIn(minWidth = 176.dp, minHeight = 176.dp).graphicsLayer { scaleX = scale; scaleY = scale }) {
+            Column(Modifier.clickable(enabled = enabled, role = Role.Button, interactionSource = interaction,
+                indication = null, onClick = speak).padding(28.dp), horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center) {
+                Icon(if (state.recording) Icons.Outlined.Stop else Icons.Outlined.Mic, null, Modifier.size(44.dp))
+                Spacer(Modifier.height(14.dp))
+                Text(if (state.recording) "Stop recording" else "Speak to Neyra", style = MaterialTheme.typography.labelLarge)
+            }
+        }
     }
 }

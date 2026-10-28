@@ -606,6 +606,27 @@
       "navigationBar": "Android edge-to-edge default; no custom navigation-bar icon policy is specified.",
       "validation": "Clean-home captures are being generated in .impeccable/review/clean-home; no clean-home visual verdict is available. Source extraction does not establish visual approval.",
       "source": "app/src/main/kotlin/dev/neyra/companion/MainActivity.kt"
+    },
+    "compactCapture": {
+      "header": "Centered small wordmark and filled PC selector; 48dp minimum touch height",
+      "speak": {
+        "minimumDiameterDp": 176,
+        "iconDp": 44,
+        "pressedScale": 0.96,
+        "springDamping": 1,
+        "springStiffness": 700
+      },
+      "dock": {
+        "radiusDp": 24,
+        "iconDp": 22,
+        "labelSp": 11,
+        "selectionMarkDp": [
+          16,
+          3
+        ]
+      },
+      "evidence": ".impeccable/review/compact-header/",
+      "review": "No separate reviewer verdict claimed"
     }
   },
   "components": [

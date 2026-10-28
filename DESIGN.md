@@ -143,9 +143,9 @@ The variable font is registered as Normal with an explicit axis weight of 450 an
 
 Center a scrolling working column with a maximum width of 720dp, horizontal gutters of 24dp, vertical padding of 20dp and 16dp section gaps. Related controls wrap with 8dp gaps. Preserve scaffold insets, IME padding and bring-into-view handling for imported/reviewed drafts.
 
-Capture opens with only a full-width computer dropdown at the top and a full-width Speak button below, within the shared app shell. No content headline, connection panel, modes, disclosures, editor, refresh action or busy-operation controls appear on this home. Compose contains the secondary capture and review workflow.
+Capture uses a compact centered header: the 16sp Neyra wordmark sits beside a filled 48dp-minimum PC selector. Its work area contains one centered circular Speak control, at least 176dp across. No content headline, connection panel, modes, disclosures, editor, refresh action or busy-operation controls appear on this home. Compose contains the secondary capture and review workflow.
 
-Below 600dp, use the five labeled native bottom destinations in source order: Capture, Compose, PCs, Inbox and Notes. At 600dp and above, use the native rail with safe vertical insets. The root Row backdrop, tablet rail and phone bar use primaryContainer forest chrome. The root backdrop continues behind the rail’s safe vertical insets. Both navigation variants use onPrimaryContainer labels and unselected icons, primary selection indicators and onPrimary selected icons. Do not force a desktop grid onto tablet content.
+Below 600dp, use the five labeled native bottom destinations in source order: Capture, Compose, PCs, Inbox and Notes. At 600dp and above, use the native rail with safe vertical insets. The root Row backdrop, tablet rail and phone bar use primaryContainer forest chrome. The root backdrop continues behind the rail’s safe vertical insets. The tablet rail uses native selection indicators. The phone uses an inset 24dp-radius forest dock with labeled 22dp icons, 11sp labels and a 16×3dp citron selection mark. Each destination exposes native Tab semantics. Do not force a desktop grid onto tablet content.
 
 ## Elevation & Depth
 
@@ -158,7 +158,7 @@ Theme shapes are softly squared: small, medium and large tokens above. The conne
 ## Components
 
 ### Buttons
-Native filled Send and Speak retain enabled, disabled, pressed and focus behavior. Speak has a minimum height of 76dp and a 28dp microphone/stop icon; Send has a 48dp minimum. Speak becomes Stop recording while recording and requires a selected computer; busy state disables it. Progress and Stop request appear outside Capture. Secondary actions use native outlined or text buttons.
+Native filled Send and Speak retain enabled, disabled, pressed and focus behavior. Compose Speak has a minimum height of 76dp and a 28dp microphone/stop icon; Send has a 48dp minimum. Speak becomes Stop recording while recording and requires a selected computer; busy state disables it. Progress and Stop request appear outside Capture. Secondary actions use native outlined or text buttons.
 
 ### Chips
 Native FilterChips in Compose choose capture intent and reminder recurrence. Keep wrapping, selected semantics and busy-state disabling.
@@ -167,7 +167,7 @@ Native FilterChips in Compose choose capture intent and reminder recurrence. Kee
 The forest connection panel in Compose has 20dp padding and 12dp internal spacing. Other destinations use native lists, dividers and open text groups rather than a universal card wrapper.
 
 ### Inputs / Fields
-The Capture computer selector is a native read-only outlined exposed dropdown labeled Computer. It lists paired computers and a Manage computers action leading to Computers; selection is disabled during recording or busy operations. Without a selection it reads Select a computer.
+The Capture computer selector is an authored filled surface with a computer icon, truncated selected name and chevron, anchored to a native popup menu. It lists paired computers and a Manage computers action leading to Computers; selection is disabled during recording or busy operations. Without a selection it reads Select a computer.
 
 Native outlined Compose draft and Notes search fields retain labels, focus and disabled treatment. Drafts allow 3–10 visible lines and keep review warnings visible. Search is single-line. Pairing uses explicit fingerprint verification and a password-masked token field.
 
@@ -195,4 +195,13 @@ In Compose, phone and computer icons bracket a short geometric path. Online uses
 - Don't treat discovery as pairing or disconnected computers as connected.
 - Don't add fetched decorative media, blur, perpetual animation or claims of fully local provider conversations.
 
-Documentation evidence: SpeakHome.kt and CompanionApp.kt establish the current home, five destinations and workflow; NeyraTheme.kt establishes the preserved palette and type. Existing NotesScreen.kt and MainActivity.kt documentation remains unchanged in scope. Clean-home captures in .impeccable/review/clean-home are being generated; no clean-home visual verdict is available. Prior forest review results do not establish approval of this composition. Physical camera/audio, offline TTS, launcher widgets, battery/Doze and reboot behavior require device validation; no latency or hardware measurements are claimed. No defect or unverified review result is canonized as a system rule. Sidecar web samples illustrate native roles; they do not replace Compose specifications.
+Documentation evidence: SpeakHome.kt and CompanionApp.kt establish the current home, five destinations and workflow; NeyraTheme.kt establishes the preserved palette and type. Existing NotesScreen.kt and MainActivity.kt documentation remains unchanged in scope. The previous clean-home composition received ship. The compact-header Apple Design refinement has current captures under .impeccable/review/compact-header/; no separate reviewer verdict is claimed for it. Physical camera/audio, offline TTS, launcher widgets, battery/Doze and reboot behavior require device validation; no latency or hardware measurements are claimed. No defect or unverified review result is canonized as a system rule. Sidecar web samples illustrate native roles; they do not replace Compose specifications.
+
+### Authored capture interaction
+
+Home Speak uses a circular Surface and semantic Button click target. Touch-down
+scales it to 0.96 with a critically damped spring (stiffness 700); release or
+cancellation retargets from the current value. Android animation scaling applies.
+No repeating motion or artificial wait is added. Disabled Speak uses surfaceContainerHigh
+and onSurfaceVariant, with zero elevation. Enabled Speak uses primary/onPrimary
+and 6dp elevation, removed while pressed. The popup remains anchored to its trigger.

@@ -56,3 +56,11 @@ recreation preserves the draft in Compose. Native captures are recorded under
 
 Clean-home Impeccable review: `ship`, all five current native captures valid,
 no material fixes. Hardware, TalkBack and performance remain unmeasured.
+
+## Compact header / Apple Design refinement
+
+Build, lint, core tests and both UI instrumentation scenarios pass. Header selector,
+circular Speak and navigation dock retain Android button/tab semantics. Current
+phone/menu, dark 1.3-scale and tablet captures: `.impeccable/review/compact-header/`.
+Press animation uses Compose spring state and system animation scaling; physical
+frame pacing, TalkBack and hardware microphone behavior were not measured.

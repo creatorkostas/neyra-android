@@ -52,3 +52,15 @@ transcription/queue controls and conversations. Shared text opens Compose;
 stopping a recording opens Compose. The dropdown selects an existing paired
 computer and offers Manage computers for pairing/recovery. Preserve forest
 identity without introducing decoration on the simplified home.
+
+## Compact header and authored controls
+
+User explicitly requests Apple Design principles: smaller neyra text with the
+computer selector next to it in a centered top cluster, custom control styling.
+Capture's header now owns both wordmark and anchored PC selector; its work area
+contains a circular microphone action. A floating forest navigation dock uses
+labeled icons and a small selection mark instead of default indicator pills.
+Press feedback uses an interruptible critically damped scale spring. Preserve
+Android click cancellation, accessibility semantics, font scaling and system
+animation scaling. No blur, network assets, gesture replacement or idle motion.
+This supersedes the previous separate full-width outlined selector.
