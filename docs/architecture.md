@@ -97,3 +97,12 @@ preserves per-destination scroll/search. Shared-input navigation is consumed onc
 so configuration changes preserve the user's current destination. Finished desktop
 transcripts are persisted locally before recording deletion, and pending audio
 metadata is saved at recording start to survive process shutdown.
+
+## Minimal opening screen
+
+SpeakHome presents only a paired-computer dropdown and a recording button. The
+parent owns destination changes and the saveable draft; Compose owns the full
+editor, modes, recording review and conversations. Share imports and completed
+recordings navigate to Compose. Home target changes use the same model selection
+contract and never retarget queued work. Five destinations share phone navigation
+and a tablet rail.

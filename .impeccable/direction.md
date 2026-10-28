@@ -13,10 +13,10 @@ STORY: Open Capture, recognize the destination and its connection state, choose
 the intent, record or type, review, and send. Computers handles trust; Inbox
 handles reminders; Notes handles retained thoughts and unsent work.
 
-FIRST VIEWPORT: Forest app bar; compact two-line capture heading; selected
-computer with phone-to-computer connection path; modes; substantial speech
-action. Supporting privacy copy and editable draft continue below. Avoid the
-previous large introduction competing with the task.
+FIRST VIEWPORT: Forest app bar, computer dropdown at the top of the working
+surface, then one Speak button. All secondary controls live in Compose or other
+destinations. No heading, connection panel, mode controls, editor or refresh on
+Capture. Native navigation remains visible.
 
 FORM: seed:08bb51103dbaae08, grounded candidate 5, selected by the builder after
 the user explicitly delegated visual-direction choice. Code-first confirmed.
@@ -40,3 +40,15 @@ state text. It is state-bearing code geometry, never a fabricated live waveform.
 
 PERFORMANCE: Bundled font, flat role-based colors, no fetched media, no perpetual
 animation or decorative blur. All existing asynchronous workflows stay intact.
+
+## Clean home correction (user-directed)
+
+The user rejects the busy first screen. This precise composition overrides the
+prior first viewport: one computer dropdown at the top, followed by one Speak
+button. No headline, connection card, mode chips, privacy paragraphs, editor or
+refresh action on the initial Capture destination. Native navigation remains.
+Compose is a separate fifth destination containing typing, modes, review,
+transcription/queue controls and conversations. Shared text opens Compose;
+stopping a recording opens Compose. The dropdown selects an existing paired
+computer and offers Manage computers for pairing/recovery. Preserve forest
+identity without introducing decoration on the simplified home.

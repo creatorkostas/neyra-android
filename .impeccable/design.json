@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-28T12:53:22.004956Z",
+  "generatedAt": "2026-10-28T13:01:09.658810Z",
   "title": "Design System: Neyra Android",
   "extensions": {
     "colorMeta": {
@@ -592,12 +592,19 @@
     "navigation": {
       "container": "Root Row backdrop, tablet rail and phone bottom bar use MaterialTheme.colorScheme.primaryContainer; the root backdrop continues behind the rail safe vertical insets.",
       "items": "Both variants explicitly use onPrimaryContainer for labels and unselected icons, primary for the selection indicator and onPrimary for selected icons.",
-      "source": "app/src/main/kotlin/dev/neyra/companion/ui/CompanionApp.kt"
+      "source": "app/src/main/kotlin/dev/neyra/companion/ui/CompanionApp.kt",
+      "destinations": [
+        "Capture",
+        "Compose",
+        "Computers",
+        "Inbox",
+        "Notes"
+      ]
     },
     "systemChrome": {
       "statusBar": "MainActivity enables edge-to-edge with SystemBarStyle.dark(Color.TRANSPARENT): transparent status-bar scrim and light icons. The primaryContainer root backdrop covers the tablet rail status inset; the app bar covers the content-side status inset.",
       "navigationBar": "Android edge-to-edge default; no custom navigation-bar icon policy is specified.",
-      "validation": "Source extraction only. Refreshed forest tablet captures and the inset fix await the next visual reviewer; no final review verdict is claimed.",
+      "validation": "Clean-home captures are being generated in .impeccable/review/clean-home; no clean-home visual verdict is available. Source extraction does not establish visual approval.",
       "source": "app/src/main/kotlin/dev/neyra/companion/MainActivity.kt"
     }
   },
@@ -613,29 +620,36 @@
     {
       "name": "Speak",
       "kind": "button",
-      "description": "Illustrative light-mode translation; native Compose geometry and interaction states remain authoritative.",
+      "description": "Filled Speak action on Capture and Compose; becomes Stop recording. Illustrative light-mode translation; native Compose states remain authoritative.",
       "html": "<button class=\"ds-speak\">Speak to Neyra</button>",
-      "css": ".ds-speak{background:#DCEC98;color:#243313;border:0;border-radius:999px;min-height:76px;padding:16px 24px;font-family:Manrope,sans-serif;font-size:16px;font-weight:650}.ds-speak:hover{filter:brightness(.95)}.ds-speak:focus-visible{outline:2px solid #225542;outline-offset:3px}.ds-speak:active{filter:brightness(.9)}",
+      "css": ".ds-speak{background:#225542;color:#F5F8ED;border:0;border-radius:999px;min-height:76px;padding:16px 24px;font-family:Manrope,sans-serif;font-size:16px;font-weight:650}.ds-speak:hover{filter:brightness(.95)}.ds-speak:focus-visible{outline:2px solid #225542;outline-offset:3px}.ds-speak:active{filter:brightness(.9)}",
       "refersTo": "speak"
+    },
+    {
+      "name": "Computer dropdown",
+      "kind": "input",
+      "description": "Capture home: paired-computer selection followed by Speak. Manage computers opens Computers; disabled while recording or busy. Illustrative native-role translation.",
+      "html": "<label class=\"ds-computer\">Computer<select aria-label=\"Computer\"><option>Select a computer</option><option>Manage computers</option></select></label>",
+      "css": ".ds-computer{display:block;color:#465649;font:450 16px/24px Manrope,sans-serif}.ds-computer select{display:block;width:100%;min-height:56px;border:1px solid #737F6D;border-radius:4px;padding:16px;background:#F4F5EC;color:#192E25;font:inherit}.ds-computer select:hover{border-color:#192E25}.ds-computer select:focus-visible{outline:2px solid #225542}.ds-computer select:disabled{opacity:.38}"
     },
     {
       "name": "Draft",
       "kind": "input",
-      "description": "Illustrative light-mode translation; native Compose geometry and interaction states remain authoritative.",
+      "description": "Compose workflow component. Illustrative light-mode translation; native Compose geometry and interaction states remain authoritative.",
       "html": "<label class=\"ds-field\">Speak or type your request<textarea aria-label=\"Draft\"></textarea></label>",
       "css": ".ds-field{color:#465649;font-family:Manrope,sans-serif;}.ds-field textarea{display:block;min-height:96px;padding:16px;border:1px solid #737F6D;border-radius:4px;background:#F4F5EC;color:#192E25;font:450 16px/24px Manrope,sans-serif}.ds-field textarea:hover{border-color:#192E25}.ds-field textarea:focus-visible{outline:2px solid #225542}"
     },
     {
       "name": "Mode",
       "kind": "chip",
-      "description": "Illustrative light-mode translation; native Compose geometry and interaction states remain authoritative.",
+      "description": "Compose workflow component. Illustrative light-mode translation; native Compose geometry and interaction states remain authoritative.",
       "html": "<button class=\"ds-chip\" aria-pressed=\"true\">Note</button>",
       "css": ".ds-chip{background:#DCEC98;color:#243313;border:0;border-radius:8px;padding:6px 16px;min-height:32px;font:650 14px/20px Manrope,sans-serif}.ds-chip:hover{filter:brightness(.95)}.ds-chip:focus-visible{outline:2px solid #225542;outline-offset:3px}.ds-chip:active{filter:brightness(.9)}"
     },
     {
       "name": "Connection panel",
       "kind": "card",
-      "description": "Illustrative light-mode translation; native Compose geometry and interaction states remain authoritative.",
+      "description": "Compose workflow component. Illustrative light-mode translation; native Compose geometry and interaction states remain authoritative.",
       "html": "<section class=\"ds-panel\"><svg viewBox=\"0 0 240 24\" width=\"100%\" height=\"24\" aria-hidden=\"true\"><rect x=\"1\" y=\"2\" width=\"12\" height=\"20\" rx=\"2\"/><path d=\"M26 12H210\"/><rect x=\"220\" y=\"3\" width=\"19\" height=\"14\"/><path d=\"M229 17v5m-6 0h12\"/></svg><h2>Synthetic computer</h2><p>Connected on your local network</p><button>Change computer \u2192</button></section>",
       "css": ".ds-panel{background:#153D31;color:#EAF2DA;border-radius:16px;padding:20px;font-family:Manrope,sans-serif;}.ds-panel svg{fill:none;stroke:currentColor;stroke-width:2}.ds-panel h2{font-size:24px;font-weight:650}.ds-panel p{font-size:14px}.ds-panel button{background:transparent;color:inherit;border:0;padding:12px 0;font:650 14px Manrope,sans-serif}.ds-panel button:hover{text-decoration:underline}.ds-panel button:focus-visible{outline:2px solid #EAF2DA}.ds-panel button:active{opacity:.8}",
       "refersTo": "connection-panel"
@@ -643,18 +657,18 @@
     {
       "name": "Phone navigation",
       "kind": "nav",
-      "description": "Illustrative light-mode translation; native Compose geometry and interaction states remain authoritative.",
-      "html": "<nav class=\"ds-nav\" aria-label=\"Destinations\"><button aria-current=\"page\">Capture</button><button>Computers</button><button>Inbox</button><button>Notes</button></nav>",
+      "description": "Five native destinations: Capture, Compose, PCs, Inbox and Notes; rail at 600dp. Illustrative light-mode translation; Compose remains authoritative.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Destinations\"><button aria-current=\"page\">Capture</button><button>Compose</button><button>Computers</button><button>Inbox</button><button>Notes</button></nav>",
       "css": ".ds-nav{display:flex;gap:8px;padding:12px;background:#153D31}.ds-nav button{flex:1;border:0;background:transparent;color:#EAF2DA;min-height:48px;font:650 14px Manrope,sans-serif}.ds-nav button[aria-current]{background:#225542;color:#F5F8ED;border-radius:24px}.ds-nav button:hover{filter:brightness(1.1)}.ds-nav button:focus-visible{outline:2px solid #DCEC98}.ds-nav button:active{opacity:.8}"
     }
   ],
   "narrative": {
     "northStar": "Forest connection",
-    "overview": "A private thought travels from this phone to one chosen computer. Deep forest chrome frames lichen working surfaces; citron gives selection and capture a distinct voice. The Nordic cultural identity direction is expressed through palette, bundled type and one geometric connection signature.\n\nThis is an Android task interface: native Material 3 controls, explicit destinations and editable drafts carry the work. Speed and privacy guide the design; neither physical-device performance nor hardware behavior is established by this documentation.",
+    "overview": "A private thought travels from this phone to one chosen computer. Deep forest chrome frames lichen working surfaces; citron gives selection a distinct voice. The Nordic cultural identity direction is expressed through palette, bundled type and one geometric connection signature.\n\nThis is an Android task interface: native Material 3 controls, explicit destinations and editable drafts carry the work. Speed and privacy guide the design; neither physical-device performance nor hardware behavior is established by this documentation.",
     "keyCharacteristics": [
       "Forest chrome, lichen surfaces and citron emphasis.",
       "Bundled Manrope with native Android controls.",
-      "Visible destination and text-backed connection geometry."
+      "Visible destination, a two-control home and text-backed connection geometry in Compose."
     ],
     "rules": [
       {
@@ -674,6 +688,7 @@
       }
     ],
     "dos": [
+      "Do keep Capture to the computer dropdown followed by Speak; keep secondary capture and review controls in Compose.",
       "Do preserve draft text, mode and original speech target across navigation and destination changes.",
       "Do keep recording/provider disclosures, queue consent and notification-delay limits readable.",
       "Do retain search, outbox retry/deletion confirmation, reminder actions, pairing and conversation playback/Stop."

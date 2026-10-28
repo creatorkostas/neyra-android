@@ -29,7 +29,7 @@ import java.text.DateFormat
 import java.util.Date
 
 private enum class Destination(val label: String, val icon: ImageVector) {
-    CAPTURE("Capture", Icons.Outlined.Mic), DEVICES("Computers", Icons.Outlined.Computer), INBOX("Inbox", Icons.Outlined.Notifications), NOTES("Notes", Icons.Outlined.Notes)
+    CAPTURE("Capture", Icons.Outlined.Mic), COMPOSE("Compose", Icons.Outlined.EditNote), DEVICES("PCs", Icons.Outlined.Computer), INBOX("Inbox", Icons.Outlined.Notifications), NOTES("Notes", Icons.Outlined.Notes)
 }
 
 private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", targetValue: String? = null,
@@ -67,8 +67,16 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
         var navigatedImport by rememberSaveable { mutableLongStateOf(0L) }
         LaunchedEffect(state.importVersion) {
             if (state.importVersion != 0L && state.importVersion != navigatedImport) {
-                destination = Destination.CAPTURE; navigatedImport = state.importVersion
+                destination = Destination.COMPOSE; navigatedImport = state.importVersion
             }
+        }
+        var wasRecording by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect(state.recording) {
+            if (wasRecording && !state.recording) destination = Destination.COMPOSE
+            wasRecording = state.recording
+        }
+        LaunchedEffect(state.reviewVersion) {
+            if (state.reviewVersion != 0L && state.reviewVersion != captureDraft.reviewedVersion) destination = Destination.COMPOSE
         }
         LaunchedEffect(state.message) { state.message?.let { snackbar.showSnackbar(it); model.message(null) } }
         BoxWithConstraints {
@@ -81,7 +89,7 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
                 }
                 Scaffold(modifier = Modifier.weight(1f),
                     topBar = { TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer, titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer, actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer), title = { Text("neyra", style = MaterialTheme.typography.titleLarge) }, actions = {
-                        IconButton(onClick = model::refresh, enabled = !state.busy) { Icon(Icons.Outlined.Refresh, "Sync computers") }
+                        if (destination != Destination.CAPTURE) IconButton(onClick = model::refresh, enabled = !state.busy) { Icon(Icons.Outlined.Refresh, "Sync computers") }
                     }) },
                     snackbarHost = { SnackbarHost(snackbar) },
                     bottomBar = { if (!wide) NavigationBar(containerColor = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer) { Destination.entries.forEach { item ->
@@ -93,12 +101,19 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
                     screenState.SaveableStateProvider(destination.name) {
                     Column(Modifier.widthIn(max = 720.dp).fillMaxWidth().imePadding().verticalScroll(rememberScrollState())
                         .padding(horizontal = 24.dp, vertical = 20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        if (state.busy) {
+                        if (state.busy && destination != Destination.CAPTURE) {
                             LinearProgressIndicator(Modifier.fillMaxWidth())
                             TextButton(onClick = { model.cancelOperation(); onStopSpeech() }) { Text("Stop request") }
                         }
                         when (destination) {
-                            Destination.CAPTURE -> Capture(state, model, captureDraft, onSpeak, { destination = Destination.DEVICES }, onRead, onStopSpeech)
+                            Destination.CAPTURE -> SpeakHome(state, model::select, { destination = Destination.DEVICES }) {
+                                onStopSpeech()
+                                if (!state.recording) captureDraft.target.value = state.selectedId
+                                val stopping = state.recording
+                                onSpeak { result -> captureDraft.text.value = result; destination = Destination.COMPOSE }
+                                if (stopping) destination = Destination.COMPOSE
+                            }
+                            Destination.COMPOSE -> Capture(state, model, captureDraft, onSpeak, { destination = Destination.DEVICES }, onRead, onStopSpeech)
                             Destination.DEVICES -> Devices(state, candidates, discoveryError, model::select, { pairing = it }, { peer -> if (state.outbox.any { it.machineId == peer.id }) forgetting = peer else model.forget(peer) },
                                 { model.discovery.stop(); model.discovery.start() }, onScan)
                             Destination.INBOX -> Inbox(state, model::action, onNotifications)
@@ -143,7 +158,7 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
             withFrameNanos { }; draftView.bringIntoView()
         }
     }
-    Text("A thought.\nA little further.", style = MaterialTheme.typography.headlineLarge)
+    Text("Compose", style = MaterialTheme.typography.headlineLarge)
     ConnectionPanel(state, onComputers)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { CaptureMode.entries.forEach { item ->
         FilterChip(selected = item == mode, onClick = { mode = item }, label = { Text(item.label) }, enabled = !state.busy)

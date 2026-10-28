@@ -44,3 +44,15 @@ benchmark was performed. Current emulator captures are in
 Impeccable full review found one tablet status-bar contrast issue. A forest
 inset/rail backdrop corrected it; the exact tablet recapture was scored resolved
 with disposition `ship` for that fix. The final inset change also passes build/lint.
+
+## Minimal Capture home
+
+The first screen contains the computer dropdown and Speak action. Compose holds
+the full editor/modes/review. Build, lint, core tests and both app instrumentation
+scenarios pass. The capture regression checks the uncluttered home, dropdown
+selection, Speak-to-editor flow, retained text and changed-target guard. Share
+recreation preserves the draft in Compose. Native captures are recorded under
+`.impeccable/review/clean-home/`, including dark mode at 1.3 scale and tablet.
+
+Clean-home Impeccable review: `ship`, all five current native captures valid,
+no material fixes. Hardware, TalkBack and performance remain unmeasured.

@@ -113,3 +113,10 @@ surface briefs.
 
 No numeric startup, interaction-latency or battery-use budgets have been agreed.
 Remote delivery beyond the local network is outside the current scope.
+
+## Confirmed opening workflow
+
+The user explicitly requires a clean opening screen: a dropdown at the top to
+select a computer, then a Speak button below. All secondary capture controls and
+information belong on other screens. Preserve feature access through navigation;
+recording review and shared text belong in Compose.

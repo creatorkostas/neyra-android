@@ -18,3 +18,9 @@ User requests a stunning appearance beyond default Compose, with speed and
 privacy preserved, and delegates direction choice. Forest connection replaces
 the prior blue identity; see direction.md. Keep all destinations, review guards,
 original-target ownership, disclosure and accessibility behavior.
+
+## User-directed clean opening screen
+
+Capture shows only a computer dropdown and Speak action, plus app navigation.
+Compose owns all secondary capture/review/mode controls. Stop recording and share
+imports lead to Compose. Five phone destinations become the matching tablet rail.

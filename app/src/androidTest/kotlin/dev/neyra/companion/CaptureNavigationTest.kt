@@ -35,11 +35,19 @@ class CaptureNavigationTest {
         compose.runOnUiThread { model = CompanionViewModel(discovery, store, api, ReminderCache.get(context)) }
         compose.setContent { CompanionApp(model, { receive -> receive("Synthetic spoken note") }, {}) }
         compose.waitUntil { model.state.value.peers.size == 2 }
+        compose.onNodeWithText("Reminder").assertDoesNotExist()
+        compose.onNodeWithText("Speak or type your request").assertDoesNotExist()
+        compose.onNodeWithText("Speak to Neyra").assertExists()
+        compose.onNodeWithText("first").performClick()
+        compose.onNodeWithText("second").performClick()
+        compose.runOnIdle { model.select("first") }
+        compose.onNodeWithText("Speak to Neyra").performClick()
+        compose.onNodeWithText("Synthetic spoken note").assertExists()
         compose.onNodeWithText("Reminder").performClick()
         compose.onNodeWithText("Speak to Neyra").performClick()
-        compose.onNodeWithText("Computers").performClick()
+        compose.onNodeWithText("PCs").performClick()
         compose.runOnIdle { model.select("second") }
-        compose.onNodeWithText("Capture").performClick()
+        compose.onAllNodesWithText("Compose").onLast().performClick()
         compose.onNodeWithText("Synthetic spoken note").assertExists()
         compose.onNodeWithText("Reminder").assertIsSelected()
         compose.onNodeWithText("Send to second").assertIsNotEnabled()

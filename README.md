@@ -44,11 +44,11 @@ on branch `feat/android-companion`; use that version until the bridge is merged.
    **Home** or **Voice settings**, and choose **Enable companion and add a phone**.
 3. Keep the phone and computer on the same trusted Wi-Fi/network. Allow Neyra
    through the computer's firewall on private networks if prompted.
-4. In the Android app, open **Computers → Scan pairing QR** and scan the code
+4. In the Android app, open **PCs → Scan pairing QR** and scan the code
    displayed on your computer. If it expires, generate another on the desktop.
    Manual fingerprint/token pairing remains available; verify those on the computer.
-5. Select the computer, return to Capture, and type or record. Stop recording,
-   choose **Transcribe on computer**, review, and send. **Queue as note** saves a
+5. Select the computer in Capture’s dropdown and tap **Speak to Neyra**. Stopping
+   opens **Compose** for review. For typing or other modes, open Compose. Choose **Transcribe on computer**, review, and send. **Queue as note** saves a
    recording for automatic transcription and note creation later.
 6. In Inbox, enable Android notifications. Keep Neyra running for synchronization.
 
