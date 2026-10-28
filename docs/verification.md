@@ -82,3 +82,8 @@ These are unpaired empty states, not proof of physical-device operation. Speak i
 intentionally disabled until a computer is selected. Status icons follow the system
 theme and remain legible on both canvases. Hardware performance, TalkBack and battery
 behavior remain unmeasured; no independent visual-review verdict is claimed.
+
+Capture caveat: the SwiftShader emulator intermittently retained the prior screen's
+pixels after navigation while its accessibility tree exposed the new screen. The
+Compose image was recaptured after a configuration redraw. Navigation semantics
+pass automated tests; physical-device rendering still needs confirmation.
