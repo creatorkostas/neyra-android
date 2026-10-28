@@ -30,3 +30,16 @@ motion settings; no custom entrance animation.
 Workflow: code-led by explicit user choice. No approved image comp. No web
 detector ran because this is native Compose. Evidence is Android 15 emulator
 screenshots, including tablet-sized configuration, dark theme and 1.3 font scale.
+
+## Confirmed 0.2 extension
+
+Keep the existing world. Four destinations now include Notes for cached search
+and the durable outbox. Conversation answers precede the follow-up composer;
+phone offline TTS reads completed answers. Recording remains local until explicit
+Transcribe or Queue, with a visible original destination and persisted draft.
+Computers adds single-use QR scanning; Inbox adds recurrence and Stop repeating.
+Sharing opens an editable draft. Capture draft ownership is hoisted so asynchronous
+results survive navigation, and each destination keeps its own scroll state.
+Native captures in review/expanded are authoritative for this extension. They
+use synthetic service responses; hardware speech/camera/TTS/widget checks remain
+explicitly unverified. Desktop Home also exposes the companion action at 1000px.

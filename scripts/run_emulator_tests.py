@@ -12,6 +12,8 @@ state = json.loads(args.state.read_text())
 root = Path(__file__).resolve().parents[1]
 wrapper = root / ('gradlew.bat' if os.name == 'nt' else 'gradlew')
 command = [str(wrapper), '-p', str(root), ':data:connectedDebugAndroidTest']
-for key in ('port', 'pin', 'token'):
+for key in ('port', 'pin', 'token', 'invite'):
+    if key not in state:
+        continue
     command.append(f'-Pandroid.testInstrumentationRunnerArguments.{key}={state[key]}')
 raise SystemExit(subprocess.call(command))

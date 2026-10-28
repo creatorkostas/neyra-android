@@ -1,24 +1,31 @@
-# Verification
+# Verification — 0.2 companion extension
 
-Development environment: JDK 17, SDK 35, Android 15 x86_64 emulator.
+Environment: JDK 17, SDK 35, Android 15 x86_64 emulator; Qt offscreen on Linux.
 
-- `:app:assembleDebug`: passed; installable development APK generated.
-- `:app:lintDebug`: passed, no errors. Dependency-update and backup-rule advice
-  remain warnings. Versions are intentionally pinned for reproducibility.
-- `:core:test`: passed (2 JVM tests: scoped delivery identity and certificate pins).
-- `:data:connectedDebugAndroidTest`: passed (1 integration scenario exercising
-  real TLS transport against a synthetic server, wrong-pin rejection, capture,
-  reminder completion, encrypted peer persistence, and cache removal).
-- `:app:connectedDebugAndroidTest`: passed (spoken draft/mode retention across
-  navigation, changed-target send guard, and edit-to-review recovery).
-- NSD: the app discovered the synthetic workstation in the emulator.
-- Native layouts inspected at phone and tablet sizes, with dark theme and 1.3x
-  font scale. Screenshots in `.impeccable/review` contain synthetic data only.
-- Desktop: 347 regression tests run: 346 passed, 1 skipped; the seven companion tests
-  include real loopback TLS and controller boundary tests. Ruff, Voz/Piper
-  environment checks, website JS syntax, and AUR generator checks passed.
+- Android debug build, lint and the 2 core JVM tests pass.
+- Android capture/navigation regression passes. Sharing/recreation also passes, including destination continuity after an import.
+- Three data instrumentation scenarios pass against a synthetic TLS service:
+  certificate pinning/rejection, encrypted credentials, capture/actions/cache;
+  single-use QR enrollment, audio/chat job exchange, SQLite outbox persistence,
+  stable retry IDs and searchable note cache; broadcast-to-WorkManager reminder action.
+- Desktop full regression suite: 357 tests run, 356 passed, 1 skipped.
+- Companion regressions: 17 passed as part of the final full run, including
+  durable-note metadata, shared-engine late-result routing, QR expiry/single use, receipts across restart,
+  recurrence/stop-series, phone/account scope, cancellation and mocked STT chunks.
+- Ruff, Voz/Piper environment checks, website JS syntax and AUR generator pass.
+- Desktop smoke: companion is visible on Home at 1000px and in Voice settings;
+  enabling renders the pairing QR. Native models were mocked for this UI smoke.
 
-Still unverified: physical phone speech recognition, real device/network firewall
-variations, long-running battery/Doze behavior, reboot timing, audio playback on
-a remote computer, Windows/macOS companion startup, and exact notification timing
-(which is not promised). No production-readiness claim is made.
+Tests use synthetic notes/audio/provider responses. They do not sign into an
+assistant account, consume provider usage, or prove real speech recognition quality.
+Physical camera scanning, microphone/audio quality, offline TTS voice installation,
+widget interaction on a real launcher, platform firewall differences, battery/Doze
+and reboot timing remain manual device checks. Exact notification timing is not
+promised; recurring cadence is fixed elapsed time rather than calendar/DST based.
+
+Latest native screenshots are under `.impeccable/review/expanded/`; they use a
+synthetic desktop, notes and provider responses. Earlier screenshots document 0.1.
+
+Impeccable finish review: `ship`. All eleven expanded captures were inspected,
+including corrected Capture/share views and a scrolled capture-controls view.
+No material UI fixes remain from that review.

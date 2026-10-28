@@ -26,7 +26,7 @@ class ReminderCache private constructor(private val context: Context) {
     @Synchronized fun records(): List<Reminder> {
         val array = JSONArray(prefs.getString("records", "[]"))
         return (0 until array.length()).map { i -> array.getJSONObject(i).let {
-            Reminder(it.getString("machine"), it.getString("id"), it.getString("text"), it.getLong("due"), it.getString("status"))
+            Reminder(it.getString("machine"), it.getString("id"), it.getString("text"), it.getLong("due"), it.getString("status"), it.optInt("repeat"))
         } }
     }
     private fun pending(record: Reminder): PendingIntent {
@@ -42,7 +42,7 @@ class ReminderCache private constructor(private val context: Context) {
                 NotificationManagerCompat.from(context).cancel(it.deliveryKey, 1)
         }
         val array = JSONArray()
-        current.forEach { array.put(JSONObject().put("machine", it.machineId).put("id", it.id).put("text", it.text).put("due", it.dueAt).put("status", it.status)) }
+        current.forEach { array.put(JSONObject().put("machine", it.machineId).put("id", it.id).put("text", it.text).put("due", it.dueAt).put("status", it.status).put("repeat", it.repeatSeconds)) }
         check(prefs.edit().putString("records", array.toString()).putLong("sync:${snapshot.machineId}", System.currentTimeMillis()).commit())
         schedule(current)
         notifyDue()
@@ -63,9 +63,15 @@ class ReminderCache private constructor(private val context: Context) {
         dueReminders(records(), System.currentTimeMillis(), delivered).forEach {
             val launch = context.packageManager.getLaunchIntentForPackage(context.packageName)
             val open = launch?.let { intent -> PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE) }
+            fun action(name: String): PendingIntent {
+                val actionIntent = Intent(context, NotificationActionReceiver::class.java).setAction(it.deliveryKey + ":" + name)
+                    .putExtra("machine", it.machineId).putExtra("id", it.id).putExtra("due", it.dueAt).putExtra("action", name)
+                return PendingIntent.getBroadcast(context, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            }
             val notification = NotificationCompat.Builder(context, "reminders")
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm).setContentTitle("Neyra reminder")
                 .setContentText(it.text).setStyle(NotificationCompat.BigTextStyle().bigText(it.text))
+                .addAction(0, "Done", action("done")).addAction(0, "Snooze 10 min", action("snooze"))
                 .setContentIntent(open).setAutoCancel(true).setCategory(NotificationCompat.CATEGORY_REMINDER).build()
             manager.notify(it.deliveryKey, 1, notification)
             delivered.add(it.deliveryKey)
@@ -93,11 +99,17 @@ class SyncWorker(context: Context, parameters: WorkerParameters) : CoroutineWork
         val api = TlsCompanionApi(); val cache = ReminderCache.get(applicationContext)
         val store = EncryptedPeerStore.get(applicationContext)
         val peers = runCatching { store.peers() }.getOrElse { return Result.failure() }
+        val discovery = NsdDiscovery(applicationContext)
+        val nearby = try {
+            discovery.start(); kotlinx.coroutines.delay(2500); discovery.candidates.value
+        } finally { discovery.stop() }
+        val reachable = peers.map { peer -> nearby.find { it.id == peer.id }?.let { peer.copy(host = it.host, port = it.port) } ?: peer }
         var failed = false
-        peers.forEach { peer -> runCatching {
+        reachable.forEach { peer -> runCatching {
             val snapshot = api.snapshot(peer)
-            synchronized(store) { if (store.peers().any { it.id == peer.id }) cache.update(snapshot) }
+            synchronized(store) { if (store.peers().any { it.id == peer.id }) { cache.update(snapshot); CompanionDatabase.get(applicationContext).cache(snapshot); store.save(peer) } }
         }.onFailure { failed = true } }
+        OutboxSync.flush(applicationContext, api, reachable)
         cache.notifyDue()
         return if (failed) Result.retry() else Result.success()
     }

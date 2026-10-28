@@ -27,8 +27,7 @@ The certificate pin, not the mDNS name or IP, authenticates a desktop.
 
 Coroutines run transport and persistence off the main thread. The ViewModel owns
 foreground refresh and user operations; lifecycle cancellation stops polling.
-Requests bind to a peer before suspension. Speech produces reviewed text through
-Android's speech service; changing computers after speech requires reviewing/editing
+Requests bind to a peer before suspension. Speech records bounded PCM16 locally and the desktop engine produces reviewed text; changing computers after speech requires reviewing/editing
 or returning to that computer. Speech does not silently dispatch desktop actions.
 
 WorkManager handles periodic background sync. ReminderCache has one process-wide
@@ -51,3 +50,50 @@ mutates history, reminders, or assistant controllers. The service is disabled by
 default; enabling and shutdown happen outside the GUI thread.
 
 See protocol.md for wire contracts and verification.md for tested scope.
+
+
+## Capture, outbox and conversations
+
+PhoneRecorder owns foreground-only 16 kHz mono PCM16 capture, capped at 60 seconds.
+The activity requests microphone permission and stops capture on backgrounding.
+A pending recording's path and original target survive activity/process recreation.
+CompanionDatabase owns SQLite note snapshots and a durable note/audio outbox.
+OutboxSync serializes sends, binds every entry to its original peer, persists
+transcription before note submission, and reuses the stable note request ID.
+Batches contain at most ten entries and one transcription. Failed peers are
+skipped for the rest of that batch. Pair removal is checked before submission.
+WorkManager also runs bounded discovery to recover changed desktop addresses.
+
+TLS transport uses cancellable OkHttp calls with connect/read/write/overall
+limits. Audio is base64 PCM in a bounded JSON request. Long transcription and
+provider requests return job IDs; status polling exposes partial text, completion,
+failure, and cancellation. Cancelling a job never dispatches its late result.
+PhoneSpeech owns offline Android TTS playback; Stop clears pending playback.
+MainActivity owns QR scanner, share intents, widget intents and permissions;
+NotesScreen presents cached notes and queued entries.
+
+The desktop's companion_jobs.py owns remote transcription and conversation jobs.
+It reuses the desktop-owned Transcriber while guarding recording state; native
+inference may finish after cancellation but its result is discarded. Provider
+clients and settings are selected on Qt's thread. Workers stream plain text only;
+results and conversation-memory commits return through Qt signals. Phone chat
+never enters tool routing. Per-phone ConversationMemory retains existing account,
+TTL and size limits. Authenticated request scope is injected by the transport,
+never accepted from client JSON.
+
+Reminder notification actions enqueue deadline-checked WorkManager jobs, not
+network work inside broadcast receivers. The desktop owns recurring schedules
+and creates one next occurrence on delivery/early completion; series IDs prevent
+duplicate successors and support Stop repeating. Cached phone alerts do not
+acknowledge delivery or independently create recurring desktop records.
+
+Shared STT results route explicitly to the phone job until the worker finishes,
+including after cancellation/revocation. They never enter desktop paste/history
+completion handlers. The desktop alone closes the engine, avoiding duplicate
+loaded models and preserving native runtime ownership.
+
+Capture form state is hoisted above destination composition; a saveable holder
+preserves per-destination scroll/search. Shared-input navigation is consumed once
+so configuration changes preserve the user's current destination. Finished desktop
+transcripts are persisted locally before recording deletion, and pending audio
+metadata is saved at recording start to survive process shutdown.

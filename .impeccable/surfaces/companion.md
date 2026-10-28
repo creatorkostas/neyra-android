@@ -5,3 +5,9 @@ no synthetic devices or reminder counts. Devices and Inbox are separate destinat
 Signature interaction: choose a computer, then capture to that explicit destination.
 Light and dark schemes, 48dp targets, system type scaling, phone bar/tablet rail.
 Use direct implementation as explicitly requested. No image mockup approval round.
+
+Extension: Notes is a fourth destination for cached search and the durable outbox.
+Capture adds local recording, desktop transcription, conversation replies with
+phone playback, and Once/Daily/Weekly reminder choices. Computers adds QR scanning;
+Inbox adds recurring-state labels and Stop repeating. Preserve target continuity,
+editable shared/transcribed text, explicit queue consent and offline-state truth.

@@ -99,7 +99,7 @@ components:
 
 Neyra’s calm ink and warm-surface identity becomes a native Material 3 remote for the user’s own computers. System typography, quiet tonal grouping and familiar controls keep capture and connection state readable.
 
-The selected computer is visible before capture. Speech produces editable text rather than silently dispatching an action; local-network and notification limits remain explicit.
+The selected computer is visible before capture. Recordings and shared text lead to an editable review draft rather than silently dispatching an action; local-network and notification limits remain explicit.
 
 **Key Characteristics:**
 - Ink accents on warm neutral surfaces.
@@ -138,13 +138,13 @@ Unspecified roles—including onSurfaceVariant, outline, error, surfaceContainer
 
 ## Layout
 
-One vertically scrollable content column sits beneath a native TopAppBar. At available width below 600dp, three labeled destinations use NavigationBar; at 600dp and above, they use NavigationRail. The content column is centered and capped at 720dp including its horizontal 24dp padding. This is a width-based switch, not device-name detection.
+One vertically scrollable content column sits beneath a native TopAppBar. At available width below 600dp, four labeled destinations use NavigationBar; at 600dp and above, they use NavigationRail. The content column is centered and capped at 720dp including its horizontal 24dp padding. This is a width-based switch, not device-name detection.
 
 Groups use 16dp gaps; chips and inner panel/reminder groups use 8dp. The computer panel has 20dp padding; icon gaps use 8dp or 12dp; the rail starts with a 20dp spacer. Pairing fields use 12dp gaps; content ends with a 24dp spacer. FlowRow wraps chips and reminder actions.
 
 Scaffold content padding clears bars; the rail applies safeDrawing vertical insets, and the content column applies imePadding. Preserve native bar inset handling rather than adding duplicate system padding. Scroll to reach the send action on short screens. Speak has a 64dp minimum height; send has a 48dp minimum. Other controls retain Material interactive minimum targets (48dp), including chips whose painted bounds can be smaller. Do not disable minimum interactive sizing.
 
-Evidence inspected: `.impeccable/review/phone-paired.png` shows the light phone Capture screen, labeled synthetic host, wrapped headline and bottom navigation; `tablet.png` shows the left rail and centered bounded column. These are Android emulator captures, not physical-device proof. The direction contract additionally records dark and 1.3 font-scale captures; those images were not visually inspected for this documentation pass.
+Evidence inspected: all PNG captures in `.impeccable/review/expanded/`, including corrected 0.2.0 Capture/share evidence, phone destinations, conversation, outbox, dark theme with enlarged type, tablet rail and desktop companion entry. These use an Android emulator and synthetic service responses; they do not prove physical-device behavior. The corrected expanded finish review returned `ship` with no material UI fixes.
 
 ## Elevation & Depth
 
@@ -162,7 +162,7 @@ Material defaults are unmodified: the computer panel uses medium corners; outlin
 Filled Button sends; FilledTonalButton speaks; OutlinedButton scans or opens notification settings; TextButton changes computer, pairs and acts on reminders. Preserve native padding, rounded shapes, focus, ripple and disabled opacity. Busy state disables relevant actions; the refresh icon has an accessible action description.
 
 ### Chips
-FilterChip selects Note, Reminder or Assistant. Selected state uses the native secondary-container treatment; inactive chips retain native outlines. FlowRow accommodates width and font-scale changes.
+FilterChip selects Note, Reminder, Commands or Conversation. Reminder recurrence uses Once, Daily and Weekly chips. Selected state uses the native secondary-container treatment; inactive chips retain native outlines. FlowRow accommodates width and font-scale changes.
 
 ### Cards / Containers
 The selected-computer Surface uses primaryContainer with its native content color, medium shape, 20dp padding and 8dp inner spacing. It is a state-and-destination panel, not a decorative card repeated around every section.
@@ -171,21 +171,36 @@ The selected-computer Surface uses primaryContainer with its native content colo
 OutlinedTextField holds the editable draft with four minimum and ten maximum lines, up to 8000 characters. Pairing uses full-width outlined fields with ASCII fingerprint and masked password token. Native focus, label and error colors remain authoritative; errors are visible text rather than color alone. Pairing content scrolls.
 
 ### Navigation
-Capture, Computers and Inbox always retain text labels with outlined microphone, computer and notification icons. Phone bar and tablet rail share selection state. Parent SaveableStateHolder and destination SaveableStateProvider preserve capture mode, draft and speech target while navigating. This is UI state retention, not an offline outbox guarantee.
+Capture, Computers, Inbox and Notes always retain text labels with native outlined icons. Phone bar and tablet rail share selection state. Capture draft, mode, recurrence and original speech target survive destination changes; each destination retains its scroll state and Notes retains search. Draft retention and durable queued-note storage are separate guarantees.
 
 ### Feedback and recovery
-Linear progress indicates busy work; SnackbarHost presents operation messages. Send clears the matching draft only after success. A changed speech target blocks sending until review/edit or restoration. Inbox exposes Notification settings recovery; pairing requires verified fingerprint and token. Native AlertDialog owns pairing dismissal and confirmation states.
+Linear progress indicates busy work; SnackbarHost presents operation messages. Send clears the matching draft only after success. A changed speech target blocks sending until review/edit or restoration. Inbox exposes Notification settings recovery; Computers offers QR scanning alongside verified fingerprint/token pairing. Native AlertDialog handles pairing and confirms deletion of a queued note; forgetting a computer with queued work explicitly warns that its unsent notes/recordings and cached notes will be removed. Keep the destructive action and keep/cancel choice explicit.
+
+### Recording and review
+The tonal Speak action becomes Stop recording while capturing. Privacy copy explains the 60-second local recording limit and desktop transcription. A ready recording names its original computer and exposes Transcribe on computer, Queue as note and Discard recording. Queue consent explains automatic transcription and note saving after reconnection. Transcribed text enters the editable draft; a changed target blocks sending until the original computer is restored or the text is edited. The final action names its destination, including Save note on for notes.
+
+### Conversation and playback
+Conversation answers appear before the follow-up composer, with Read aloud, Stop voice and Clear conversation controls. Busy work exposes Stop request separately from voice playback. Provider/privacy copy remains readable; unavailable offline phone voices leave the answer available as text. Commands remain a separate mode.
+
+### Shared capture and quick entry
+Android text/link sharing opens Capture in Note mode and brings the editable imported draft into view. Sharing never sends silently. The home-screen widget opens quick note or foreground recording through the same capture flow and target requirement; it does not create a second visual system.
+
+### Cached notes and outbox
+Notes uses an outlined search field for cached notes and queued text/voice-note labels. Outbox appears before cached results, names each original destination, shows waiting/error state and offers retry. Show three matching queued entries initially, with an explicit show-all/show-fewer control; this bounds the initial reading surface, not the queue's storage capacity. Deletion requires confirmation. Cached notes use title, computer/time metadata, short preview and Read note/Show less expansion with native dividers. Empty-cache and no-match messages are distinct; long cached notes are described honestly as excerpts.
+
+### Reminder actions
+Inbox presents recurrence metadata with Mark done, Snooze and Stop repeating actions. Capture chooses Once, Daily or Weekly. Keep notification-delay limits and notification settings recovery visible; notification actions remain native Android affordances.
 
 ## Do's and Don'ts
 
 ### Do:
 - Do preserve system font scaling, scrolling, IME clearance and native touch targets.
-- Do retain draft text, mode and speech target across destination changes through SaveableStateHolder.
-- Do keep the speech-provider privacy disclosure and notification-delay limits readable.
+- Do retain draft text, mode and original speech target across destination changes and keep queued destinations explicit.
+- Do keep recording/provider privacy disclosures, queue consent and notification-delay limits readable.
 
 ### Don't:
 - Don't treat discovery as pairing or an offline computer as connected.
 - Don't send a spoken draft to a changed computer until it is reviewed/edited or the original destination is restored.
 - Don't replace native controls with web styling or introduce custom entrance animation.
 
-Documentation limits: default Material role colors and component metrics are inherited rather than exhaustively extracted; sidecar web snippets are illustrative translations, not Android implementation specifications. Review verdict resolved draft retention and notification recovery; permanent-denial notification routing has code inspection only, and physical-device/production validation remains open. No defect was redefined as a design token or repaired in this pass.
+Documentation limits: default Material role colors and component metrics are inherited rather than exhaustively extracted; sidecar web snippets are illustrative translations, not Android implementation specifications. Existing native Material system typography is an intentional platform exception. Corrected expanded review returned `ship`; physical camera, microphone/audio, offline TTS, real-launcher widget and notification timing checks remain open as recorded in `docs/verification.md`. No defect was redefined as a design token or repaired in this pass.

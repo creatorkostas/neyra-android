@@ -4,6 +4,8 @@ import dev.neyra.companion.data.*
 class NeyraApplication : Application() {
     val discovery by lazy { NsdDiscovery(this) }
     val peers by lazy { EncryptedPeerStore.get(this) }
+    val database by lazy { CompanionDatabase.get(this) }
+    val recorder by lazy { PhoneRecorder(this) }
     val api by lazy { TlsCompanionApi() }
     val reminders by lazy { ReminderCache.get(this) }
     override fun onCreate() { super.onCreate(); SyncWorker.install(this) }

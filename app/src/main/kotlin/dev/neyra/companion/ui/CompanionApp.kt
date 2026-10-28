@@ -11,6 +11,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -31,19 +34,47 @@ private val Dark = darkColorScheme(primary = Color(0xFFBAC7EF), onPrimary = Colo
     primaryContainer = Color(0xFF394A75), onPrimaryContainer = Color(0xFFDCE2F9),
     background = Color(0xFF151922), secondaryContainer = Color(0xFF35425E), onSecondaryContainer = Color(0xFFDCE2F0), surface = Color(0xFF151922), onSurface = Color(0xFFE9EDF5), secondary = Color(0xFFBDC8DC))
 private enum class Destination(val label: String, val icon: ImageVector) {
-    CAPTURE("Capture", Icons.Outlined.Mic), DEVICES("Computers", Icons.Outlined.Computer), INBOX("Inbox", Icons.Outlined.Notifications)
+    CAPTURE("Capture", Icons.Outlined.Mic), DEVICES("Computers", Icons.Outlined.Computer), INBOX("Inbox", Icons.Outlined.Notifications), NOTES("Notes", Icons.Outlined.Notes)
+}
+
+private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", targetValue: String? = null,
+    repeatValue: Int = 0, imported: Long = 0L, reviewed: Long = 0L) {
+    val mode = mutableStateOf(CaptureMode.valueOf(modeValue))
+    val text = mutableStateOf(textValue)
+    val target = mutableStateOf(targetValue)
+    val repeat = mutableIntStateOf(repeatValue)
+    var importedVersion by mutableLongStateOf(imported)
+    var reviewedVersion by mutableLongStateOf(reviewed)
+    companion object {
+        val saver = listSaver<CaptureDraft, String>(save = { listOf(it.mode.value.name, it.text.value, it.target.value.orEmpty(), it.repeat.intValue.toString(), it.importedVersion.toString(), it.reviewedVersion.toString()) },
+            restore = { CaptureDraft(it[0], it[1], it[2].ifEmpty { null }, it[3].toInt(), it[4].toLong(), it[5].toLong()) })
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable fun CompanionApp(model: CompanionViewModel, onSpeak: ((String) -> Unit) -> Unit, onNotifications: () -> Unit) {
+@Composable fun CompanionApp(model: CompanionViewModel, onSpeak: ((String) -> Unit) -> Unit, onNotifications: () -> Unit, onScan: () -> Unit = {}, onRead: (String) -> Unit = {}, onStopSpeech: () -> Unit = {}) {
     MaterialTheme(colorScheme = if (isSystemInDarkTheme()) Dark else Light) {
         val state by model.state.collectAsStateWithLifecycle()
         val candidates by model.candidates.collectAsStateWithLifecycle()
         val discoveryError by model.discoveryError.collectAsStateWithLifecycle()
         var destination by rememberSaveable { mutableStateOf(Destination.CAPTURE) }
+        val captureDraft = rememberSaveable(saver = CaptureDraft.saver) { CaptureDraft() }
         val screenState = rememberSaveableStateHolder()
+        var forgetting by remember { mutableStateOf<Peer?>(null) }
         var pairing by remember { mutableStateOf<Candidate?>(null) }
         val snackbar = remember { SnackbarHostState() }
+        var lastRead by rememberSaveable { mutableLongStateOf(0L) }
+        LaunchedEffect(state.answerVersion) {
+            if (state.answerVersion != 0L && state.answerVersion != lastRead && state.answerTarget == state.selectedId) {
+                lastRead = state.answerVersion; onRead(state.answer)
+            }
+        }
+        var navigatedImport by rememberSaveable { mutableLongStateOf(0L) }
+        LaunchedEffect(state.importVersion) {
+            if (state.importVersion != 0L && state.importVersion != navigatedImport) {
+                destination = Destination.CAPTURE; navigatedImport = state.importVersion
+            }
+        }
         LaunchedEffect(state.message) { state.message?.let { snackbar.showSnackbar(it); model.message(null) } }
         BoxWithConstraints {
             val wide = maxWidth >= 600.dp
@@ -64,33 +95,59 @@ private enum class Destination(val label: String, val icon: ImageVector) {
                     } } },
                 ) { padding ->
                     Box(Modifier.padding(padding).fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+                    screenState.SaveableStateProvider(destination.name) {
                     Column(Modifier.widthIn(max = 720.dp).fillMaxWidth().imePadding().verticalScroll(rememberScrollState())
                         .padding(horizontal = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        if (state.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
-                        screenState.SaveableStateProvider(destination.name) {
-                        when (destination) {
-                            Destination.CAPTURE -> Capture(state, onSpeak, { mode, text, done -> model.send(mode, text, done) }, { destination = Destination.DEVICES })
-                            Destination.DEVICES -> Devices(state, candidates, discoveryError, model::select, { pairing = it }, model::forget,
-                                { model.discovery.stop(); model.discovery.start() })
-                            Destination.INBOX -> Inbox(state, model::action, onNotifications)
+                        if (state.busy) {
+                            LinearProgressIndicator(Modifier.fillMaxWidth())
+                            TextButton(onClick = { model.cancelOperation(); onStopSpeech() }) { Text("Stop request") }
                         }
+                        when (destination) {
+                            Destination.CAPTURE -> Capture(state, model, captureDraft, onSpeak, { destination = Destination.DEVICES }, onRead, onStopSpeech)
+                            Destination.DEVICES -> Devices(state, candidates, discoveryError, model::select, { pairing = it }, { peer -> if (state.outbox.any { it.machineId == peer.id }) forgetting = peer else model.forget(peer) },
+                                { model.discovery.stop(); model.discovery.start() }, onScan)
+                            Destination.INBOX -> Inbox(state, model::action, onNotifications)
+                            Destination.NOTES -> NotesScreen(state, model::flushQueue, model::deleteQueued)
                         }
                         Spacer(Modifier.height(24.dp))
                     }
                     }
+                    }
                 }
             }
+        }
+        forgetting?.let { peer ->
+            AlertDialog(onDismissRequest = { forgetting = null }, title = { Text("Forget ${peer.name}?") },
+                text = { Text("This deletes ${state.outbox.count { it.machineId == peer.id }} unsent notes or recordings and the cached notes from this phone.") },
+                confirmButton = { TextButton(onClick = { model.forget(peer); forgetting = null }, enabled = !state.busy && !state.syncingOutbox) { Text("Delete queued notes and forget") } },
+                dismissButton = { TextButton(onClick = { forgetting = null }) { Text("Cancel") } })
         }
         pairing?.let { candidate -> PairDialog(candidate, state.busy, state.message, { pairing = null }) { pin, token -> model.pair(candidate, pin, token) } }
         LaunchedEffect(state.peers) { if (state.peers.any { it.id == pairing?.id }) pairing = null }
     }
 }
 
-@Composable private fun Capture(state: CompanionState, onSpeak: ((String) -> Unit) -> Unit,
-    onSend: (CaptureMode, String, () -> Unit) -> Unit, onComputers: () -> Unit) {
-    var mode by rememberSaveable { mutableStateOf(CaptureMode.NOTE) }
-    var text by rememberSaveable { mutableStateOf("") }
-    var speechTarget by rememberSaveable { mutableStateOf<String?>(null) }
+@Composable private fun Capture(state: CompanionState, model: CompanionViewModel, draft: CaptureDraft, onSpeak: ((String) -> Unit) -> Unit,
+    onComputers: () -> Unit, onRead: (String) -> Unit, onStopSpeech: () -> Unit) {
+    var mode by draft.mode
+    var text by draft.text
+    var speechTarget by draft.target
+    var repeat by draft.repeat
+    val draftView = remember { BringIntoViewRequester() }
+    LaunchedEffect(state.importVersion) {
+        if (state.importVersion != 0L && state.importVersion != draft.importedVersion) {
+            text = state.incomingText; mode = CaptureMode.NOTE; speechTarget = null
+            draft.importedVersion = state.importVersion
+            withFrameNanos { }; draftView.bringIntoView()
+        }
+    }
+    LaunchedEffect(state.reviewVersion) {
+        if (state.reviewVersion != 0L && state.reviewVersion != draft.reviewedVersion) {
+            text = state.reviewText; speechTarget = state.reviewTarget
+            draft.reviewedVersion = state.reviewVersion
+            withFrameNanos { }; draftView.bringIntoView()
+        }
+    }
     Text("Your voice,\nyour computer.", style = MaterialTheme.typography.headlineLarge)
     Text("Capture a thought or ask Neyra to help.", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
     Surface(color = MaterialTheme.colorScheme.primaryContainer, shape = MaterialTheme.shapes.medium) {
@@ -105,29 +162,60 @@ private enum class Destination(val label: String, val icon: ImageVector) {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { CaptureMode.entries.forEach { item ->
         FilterChip(selected = item == mode, onClick = { mode = item }, label = { Text(item.label) }, enabled = !state.busy)
     } }
+    if (mode == CaptureMode.CHAT) {
+        Text("Uses the assistant provider configured on your computer. Follow-ups share only this phone’s recent conversation; desktop screen, clipboard and notes are not attached.", style = MaterialTheme.typography.bodySmall)
+        if (state.answer.isNotEmpty() && state.answerTarget == state.selectedId) {
+            Text("Neyra", style = MaterialTheme.typography.titleMedium)
+            Text(state.answer, style = MaterialTheme.typography.bodyLarge)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextButton(onClick = { onRead(state.answer) }) { Text("Read aloud") }
+                TextButton(onClick = onStopSpeech) { Text("Stop voice") }
+                TextButton(onClick = model::clearConversation, enabled = !state.busy) { Text("Clear conversation") }
+            }
+        }
+    }
     FilledTonalButton(onClick = {
-        speechTarget = state.selectedId
+        onStopSpeech()
+        if (!state.recording) speechTarget = state.selectedId
         onSpeak { result -> text = result }
     }, enabled = state.selected != null && !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp)) {
-        Icon(Icons.Outlined.Mic, null); Spacer(Modifier.width(12.dp)); Text("Speak to Neyra", style = MaterialTheme.typography.titleMedium)
+        Icon(Icons.Outlined.Mic, null); Spacer(Modifier.width(12.dp)); Text(if (state.recording) "Stop recording" else "Speak to Neyra", style = MaterialTheme.typography.titleMedium)
     }
-    Text("Uses your phone’s speech service. Offline recognition is requested, but your speech provider may use the internet. Review the words before sending.",
+    Text("Records up to 60 seconds on this phone. Your selected computer transcribes with its Neyra speech engine. Audio stays private until you choose Transcribe or Queue.",
         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    if (state.audioPath != null) {
+        Text("Recording ready · ${state.peers.find { it.id == state.audioTarget }?.name ?: "original computer"}", style = MaterialTheme.typography.titleMedium)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(onClick = { model.transcribe() }, enabled = !state.busy) { Text("Transcribe on computer") }
+            TextButton(onClick = model::queueAudio, enabled = !state.busy) { Text("Queue as note") }
+            TextButton(onClick = model::discardAudio, enabled = !state.busy) { Text("Discard recording") }
+        }
+        Text("Queued recordings transcribe and save as notes on their original computer after reconnection.", style = MaterialTheme.typography.bodySmall)
+    }
+    if (mode == CaptureMode.REMINDER) {
+        Text("Repeat", style = MaterialTheme.typography.titleMedium)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf(0 to "Once", 86400 to "Daily", 604800 to "Weekly").forEach { (seconds, label) ->
+            FilterChip(selected = repeat == seconds, onClick = { repeat = seconds }, label = { Text(label) }, enabled = !state.busy)
+        } }
+    }
     OutlinedTextField(value = text, onValueChange = { if (it.length <= 8000) { text = it; speechTarget = null } },
         label = { Text(if (mode == CaptureMode.REMINDER) "Remind me in 10 minutes to…" else "Speak or type your request") },
-        modifier = Modifier.fillMaxWidth(), minLines = 4, maxLines = 10, enabled = !state.busy)
+        modifier = Modifier.fillMaxWidth().bringIntoViewRequester(draftView), minLines = 4, maxLines = 10, enabled = !state.busy)
     if (speechTarget != null && speechTarget != state.selectedId) Text("Computer changed after recording. Select the original computer or edit the text before sending.", color = MaterialTheme.colorScheme.error)
-    Button(onClick = { val sent = text; onSend(mode, sent) { if (text == sent) { text = ""; speechTarget = null } } }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+    Button(onClick = { val sent = text; model.send(mode, sent, { if (text == sent) { text = ""; speechTarget = null } }, repeat) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
         enabled = text.isNotBlank() && state.selected != null && !state.busy && (speechTarget == null || speechTarget == state.selectedId)) {
         Text(if (mode == CaptureMode.NOTE) "Save note on ${state.selected?.name ?: "computer"}" else "Send to ${state.selected?.name ?: "computer"}")
     }
+    if (mode == CaptureMode.NOTE) Text("Notes are saved in the phone outbox first and sent automatically to this computer when reachable.", style = MaterialTheme.typography.bodySmall)
     if (mode == CaptureMode.ASSISTANT) Text("Local commands: open calculator, volume up, pause music, set a timer, daily briefing. Replies play on the computer. Screen and clipboard requests stay on the desktop.", style = MaterialTheme.typography.bodyMedium)
 }
 
 @Composable private fun Devices(state: CompanionState, candidates: List<Candidate>, error: String?, onSelect: (String) -> Unit,
-    onPair: (Candidate) -> Unit, onForget: (Peer) -> Unit, scan: () -> Unit) {
+    onPair: (Candidate) -> Unit, onForget: (Peer) -> Unit, scan: () -> Unit, scanQr: () -> Unit) {
     Text("Your computers", style = MaterialTheme.typography.headlineLarge)
     Text("Neyra looks for computers on the same network while this app is open.", style = MaterialTheme.typography.bodyLarge)
+    Button(onClick = scanQr, enabled = !state.busy) { Icon(Icons.Outlined.QrCodeScanner, null); Spacer(Modifier.width(8.dp)); Text("Scan pairing QR") }
+    Text("Open Android companion on your computer and scan its five-minute QR. Scanning enrolls this phone with that computer.", style = MaterialTheme.typography.bodyMedium)
     if (state.peers.isNotEmpty()) {
         Text("Paired", style = MaterialTheme.typography.titleMedium)
         state.peers.forEach { peer ->
@@ -163,7 +251,8 @@ private enum class Destination(val label: String, val icon: ImageVector) {
     state.reminders.sortedBy { it.dueAt }.forEach { reminder ->
         Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
             Text(reminder.text, style = MaterialTheme.typography.titleMedium)
-            Text("${state.peers.find { it.id == reminder.machineId }?.name ?: "Computer"} · ${DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(reminder.dueAt))} · ${reminder.status}", style = MaterialTheme.typography.bodySmall)
+            Text("${state.peers.find { it.id == reminder.machineId }?.name ?: "Computer"} · ${DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(reminder.dueAt))} · ${reminder.status}${if (reminder.repeatSeconds == 86400) " · daily" else if (reminder.repeatSeconds == 604800) " · weekly" else ""}", style = MaterialTheme.typography.bodySmall)
+            if (reminder.repeatSeconds > 0) TextButton(onClick = { onAction(reminder, "stop_repeat") }, enabled = !state.busy) { Text("Stop repeating") }
             if (reminder.status != "done") FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = { onAction(reminder, "done") }, enabled = !state.busy) { Text("Mark done") }
                 TextButton(onClick = { onAction(reminder, "snooze") }, enabled = !state.busy) { Text("Snooze 10 min") }
