@@ -124,3 +124,10 @@ recording review and shared text belong in Compose.
 The latest confirmed refinement places a smaller Neyra wordmark beside the PC
 selector in a centered header. Keep the Speak-first workflow while giving controls
 custom styling and responsive feedback inspired by Apple Design principles.
+
+## Current appearance direction
+
+The user requested a from-scratch Apple Design reset. Quiet clarity supersedes the
+forest palette: neutral surfaces, system typography, blue actions and custom-shaped
+controls throughout. Preserve the centered small wordmark/PC selector and single
+Speak action on home, all features, explicit destinations, speed and privacy.

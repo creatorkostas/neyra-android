@@ -98,17 +98,17 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
                     }) },
                     snackbarHost = { SnackbarHost(snackbar) },
                     bottomBar = { if (!wide) Box(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).navigationBarsPadding().padding(horizontal = 16.dp, vertical = 10.dp)) {
-                        Surface(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(24.dp)) {
+                        Surface(color = MaterialTheme.colorScheme.surfaceContainer, shape = RoundedCornerShape(28.dp), shadowElevation = 2.dp) {
                             Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 8.dp)) {
                                 Destination.entries.forEach { item ->
                                     val selected = destination == item
                                     Column(Modifier.weight(1f).selectable(selected = selected, role = Role.Tab,
                                         onClick = { destination = item }).padding(vertical = 8.dp),
                                         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                        Icon(item.icon, null, Modifier.size(22.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = if (selected) 1f else 0.65f))
-                                        Text(item.label, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = if (selected) 1f else 0.75f),
+                                        Icon(item.icon, null, Modifier.size(22.dp), tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
+                                        Text(item.label, color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                             style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal))
-                                        Box(Modifier.size(width = 16.dp, height = 3.dp).background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent, RoundedCornerShape(2.dp)))
+                                        Box(Modifier.size(width = 16.dp, height = 3.dp).background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent, RoundedCornerShape(2.dp)))
                                     }
                                 }
                             }
@@ -178,34 +178,34 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
     }
     Text("Compose", style = MaterialTheme.typography.headlineLarge)
     ConnectionPanel(state, onComputers)
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { CaptureMode.entries.forEach { item ->
-        FilterChip(selected = item == mode, onClick = { mode = item }, label = { Text(item.label) }, enabled = !state.busy)
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { CaptureMode.entries.forEach { item ->
+        Choice(selected = item == mode, onClick = { mode = item }, label = { Text(item.label) }, enabled = !state.busy)
     } }
     if (mode == CaptureMode.CHAT) {
         Text("Uses the assistant provider configured on your computer. Follow-ups share only this phone’s recent conversation; desktop screen, clipboard and notes are not attached.", style = MaterialTheme.typography.bodySmall)
         if (state.answer.isNotEmpty() && state.answerTarget == state.selectedId) {
             Text("Neyra", style = MaterialTheme.typography.titleMedium)
             Text(state.answer, style = MaterialTheme.typography.bodyLarge)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = { onRead(state.answer) }) { Text("Read aloud") }
                 TextButton(onClick = onStopSpeech) { Text("Stop voice") }
                 TextButton(onClick = model::clearConversation, enabled = !state.busy) { Text("Clear conversation") }
             }
         }
     }
-    Button(onClick = {
+    ActionButton(onClick = {
         onStopSpeech()
         if (!state.recording) speechTarget = state.selectedId
         onSpeak { result -> text = result }
-    }, enabled = state.selected != null && !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 76.dp)) {
-        Icon(if (state.recording) Icons.Outlined.Stop else Icons.Outlined.Mic, null, Modifier.size(28.dp)); Spacer(Modifier.width(12.dp)); Text(if (state.recording) "Stop recording" else "Speak to Neyra", style = MaterialTheme.typography.titleMedium)
+    }, enabled = state.selected != null && !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) {
+        Icon(if (state.recording) Icons.Outlined.Stop else Icons.Outlined.Mic, null, Modifier.size(24.dp)); Spacer(Modifier.width(12.dp)); Text(if (state.recording) "Stop recording" else "Speak to Neyra", style = MaterialTheme.typography.titleMedium)
     }
     Text("Records up to 60 seconds on this phone. Your selected computer transcribes with its Neyra speech engine. Audio stays private until you choose Transcribe or Queue.",
         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     if (state.audioPath != null) {
         Text("Recording ready · ${state.peers.find { it.id == state.audioTarget }?.name ?: "original computer"}", style = MaterialTheme.typography.titleMedium)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = { model.transcribe() }, enabled = !state.busy) { Text("Transcribe on computer") }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            ActionButton(secondary = true, onClick = { model.transcribe() }, enabled = !state.busy) { Text("Transcribe on computer") }
             TextButton(onClick = model::queueAudio, enabled = !state.busy) { Text("Queue as note") }
             TextButton(onClick = model::discardAudio, enabled = !state.busy) { Text("Discard recording") }
         }
@@ -213,15 +213,15 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
     }
     if (mode == CaptureMode.REMINDER) {
         Text("Repeat", style = MaterialTheme.typography.titleMedium)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { listOf(0 to "Once", 86400 to "Daily", 604800 to "Weekly").forEach { (seconds, label) ->
-            FilterChip(selected = repeat == seconds, onClick = { repeat = seconds }, label = { Text(label) }, enabled = !state.busy)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { listOf(0 to "Once", 86400 to "Daily", 604800 to "Weekly").forEach { (seconds, label) ->
+            Choice(selected = repeat == seconds, onClick = { repeat = seconds }, label = { Text(label) }, enabled = !state.busy)
         } }
     }
     OutlinedTextField(value = text, onValueChange = { if (it.length <= 8000) { text = it; speechTarget = null } },
         label = { Text(if (mode == CaptureMode.REMINDER) "Remind me in 10 minutes to…" else "Speak or type your request") },
-        modifier = Modifier.fillMaxWidth().bringIntoViewRequester(draftView), minLines = 3, maxLines = 10, enabled = !state.busy)
+        modifier = Modifier.fillMaxWidth().bringIntoViewRequester(draftView), minLines = 3, maxLines = 10, enabled = !state.busy, shape = MaterialTheme.shapes.large, colors = editorColors())
     if (speechTarget != null && speechTarget != state.selectedId) Text("Computer changed after recording. Select the original computer or edit the text before sending.", color = MaterialTheme.colorScheme.error)
-    Button(onClick = { val sent = text; model.send(mode, sent, { if (text == sent) { text = ""; speechTarget = null } }, repeat) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+    ActionButton(onClick = { val sent = text; model.send(mode, sent, { if (text == sent) { text = ""; speechTarget = null } }, repeat) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
         enabled = text.isNotBlank() && state.selected != null && !state.busy && (speechTarget == null || speechTarget == state.selectedId)) {
         Text(if (mode == CaptureMode.NOTE) "Save note on ${state.selected?.name ?: "computer"}" else "Send to ${state.selected?.name ?: "computer"}")
     }
@@ -232,47 +232,69 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
 @Composable private fun Devices(state: CompanionState, candidates: List<Candidate>, error: String?, onSelect: (String) -> Unit,
     onPair: (Candidate) -> Unit, onForget: (Peer) -> Unit, scan: () -> Unit, scanQr: () -> Unit) {
     Text("Your computers", style = MaterialTheme.typography.headlineLarge)
-    Text("Neyra looks for computers on the same network while this app is open.", style = MaterialTheme.typography.bodyLarge)
-    Button(onClick = scanQr, enabled = !state.busy) { Icon(Icons.Outlined.QrCodeScanner, null); Spacer(Modifier.width(8.dp)); Text("Scan pairing QR") }
-    Text("Open Android companion on your computer and scan its five-minute QR. Scanning enrolls this phone with that computer.", style = MaterialTheme.typography.bodyMedium)
+    Text("A private connection. On your network.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    ContentGroup {
+    ActionButton(onClick = scanQr, enabled = !state.busy) { Icon(Icons.Outlined.QrCodeScanner, null); Spacer(Modifier.width(8.dp)); Text("Scan pairing QR") }
+    Text("Open Android companion on your computer and scan its five-minute QR to pair this phone.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
     if (state.peers.isNotEmpty()) {
         Text("Paired", style = MaterialTheme.typography.titleMedium)
+        ContentGroup {
         state.peers.forEach { peer ->
-            ListItem(headlineContent = { Text(peer.name) }, supportingContent = { Text(if (state.selectedId == peer.id) "Selected for capture" else "Ready to select") },
-                leadingContent = { RadioButton(selected = state.selectedId == peer.id, onClick = { onSelect(peer.id) }) },
-                trailingContent = { IconButton(onClick = { onForget(peer) }, enabled = !state.busy) { Icon(Icons.Outlined.LinkOff, "Forget ${peer.name}") } })
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Row(Modifier.weight(1f).selectable(selected = state.selectedId == peer.id,
+                    role = Role.RadioButton, onClick = { onSelect(peer.id) }).padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    IconTile(Icons.Outlined.Computer)
+                    Column(Modifier.weight(1f)) {
+                        Text(peer.name, style = MaterialTheme.typography.titleMedium)
+                        Text(if (state.selectedId == peer.id) "Selected for capture" else "Tap to select",
+                            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    if (state.selectedId == peer.id) Icon(Icons.Outlined.CheckCircle, null, tint = MaterialTheme.colorScheme.primary)
+                }
+                IconButton(onClick = { onForget(peer) }, enabled = !state.busy) { Icon(Icons.Outlined.LinkOff, "Forget ${peer.name}") }
+            }
         }
-        HorizontalDivider()
+        }
     }
     Text("Nearby", style = MaterialTheme.typography.titleMedium)
     val unpaired = candidates.filterNot { candidate -> state.peers.any { it.id == candidate.id } }
     if (unpaired.isEmpty()) {
-        Text("Looking for Neyra…", style = MaterialTheme.typography.titleLarge)
-        Text("On your computer, open Neyra → Android companion → Enable companion. Keep both devices on the same Wi-Fi. Guest networks may block discovery.")
+        EmptyContent(Icons.Outlined.Wifi, "Looking for Neyra…", "On your computer, open Neyra → Android companion → Enable companion. Keep both devices on the same Wi-Fi. Guest networks may block discovery.")
     }
-    unpaired.forEach { candidate -> ListItem(headlineContent = { Text(candidate.name) }, supportingContent = { Text("Available to pair") },
-        leadingContent = { Icon(Icons.Outlined.Computer, null) }, trailingContent = { TextButton(onClick = { onPair(candidate) }) { Text("Pair") } }) }
+    unpaired.forEach { candidate -> ContentGroup {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            IconTile(Icons.Outlined.Computer)
+            Column(Modifier.weight(1f)) {
+                Text(candidate.name, style = MaterialTheme.typography.titleMedium)
+                Text("Available to pair", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            TextButton(onClick = { onPair(candidate) }) { Text("Pair") }
+        }
+    } }
     error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-    OutlinedButton(onClick = scan, enabled = !state.busy) { Text("Scan again") }
+    ActionButton(secondary = true, onClick = scan, enabled = !state.busy) { Text("Scan again") }
     Text("Pairing verifies your computer’s certificate. Discovery alone never grants access. To revoke a phone’s access, use Companion settings on that computer.", style = MaterialTheme.typography.bodySmall)
 }
 
 @Composable private fun Inbox(state: CompanionState, onAction: (Reminder, String) -> Unit, onNotifications: () -> Unit) {
-    Text("Right on time.", style = MaterialTheme.typography.headlineLarge)
-    Text("Reminders from your paired computers.", style = MaterialTheme.typography.bodyLarge)
-    OutlinedButton(onClick = onNotifications) { Icon(Icons.Outlined.Notifications, null); Spacer(Modifier.width(8.dp)); Text("Notification settings") }
+    Text("Reminders", style = MaterialTheme.typography.headlineLarge)
+    Text("From your computers, wherever you are at home.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    ContentGroup {
+    ActionButton(secondary = true, onClick = onNotifications) { Icon(Icons.Outlined.Notifications, null); Spacer(Modifier.width(8.dp)); Text("Notification settings") }
     Text("Syncs while open; background refresh is periodic. Android may delay alerts. Synced reminders remain available offline; new changes need your local network.", style = MaterialTheme.typography.bodySmall)
     Text(if (state.lastSync == 0L) "Not synced yet" else "Selected computer synced ${DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(state.lastSync))}", style = MaterialTheme.typography.labelLarge)
+    }
     if (state.reminders.isEmpty()) {
-        Text("A little room to breathe.", style = MaterialTheme.typography.titleLarge)
-        Text("Your reminders will appear here after pairing and syncing. Try saying “Remind me in 10 minutes to take a break.”")
+        EmptyContent(Icons.Outlined.NotificationsNone, "You’re all caught up", "Reminders appear here after pairing and syncing. Try saying “Remind me in 10 minutes to take a break.”")
     }
     state.reminders.sortedBy { it.dueAt }.forEach { reminder ->
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        ContentGroup {
             Text(reminder.text, style = MaterialTheme.typography.titleMedium)
             Text("${state.peers.find { it.id == reminder.machineId }?.name ?: "Computer"} · ${DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(reminder.dueAt))} · ${reminder.status}${if (reminder.repeatSeconds == 86400) " · daily" else if (reminder.repeatSeconds == 604800) " · weekly" else ""}", style = MaterialTheme.typography.bodySmall)
             if (reminder.repeatSeconds > 0) TextButton(onClick = { onAction(reminder, "stop_repeat") }, enabled = !state.busy) { Text("Stop repeating") }
-            if (reminder.status != "done") FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (reminder.status != "done") FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = { onAction(reminder, "done") }, enabled = !state.busy) { Text("Mark done") }
                 TextButton(onClick = { onAction(reminder, "snooze") }, enabled = !state.busy) { Text("Snooze 10 min") }
             }
@@ -286,8 +308,8 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
     AlertDialog(onDismissRequest = { if (!busy) dismiss() }, title = { Text("Pair ${candidate.name}") },
         text = { Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Copy these values from Android companion on this computer. Verify the fingerprint there; do not trust values sent by another device.")
-            OutlinedTextField(pin, { pin = it.filterNot(Char::isWhitespace) }, label = { Text("Certificate fingerprint") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii), modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(token, { token = it.filterNot(Char::isWhitespace) }, label = { Text("Phone token") }, visualTransformation = PasswordVisualTransformation(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(pin, { pin = it.filterNot(Char::isWhitespace) }, label = { Text("Certificate fingerprint") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii), modifier = Modifier.fillMaxWidth(), colors = editorColors())
+            OutlinedTextField(token, { token = it.filterNot(Char::isWhitespace) }, label = { Text("Phone token") }, visualTransformation = PasswordVisualTransformation(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), modifier = Modifier.fillMaxWidth(), colors = editorColors())
             error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
         } }, confirmButton = { TextButton(onClick = { pair(pin, token) }, enabled = !busy && validFingerprint(pin) && token.length == 64) { Text("Verify and pair") } },

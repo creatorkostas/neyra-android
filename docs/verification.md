@@ -64,3 +64,21 @@ circular Speak and navigation dock retain Android button/tab semantics. Current
 phone/menu, dark 1.3-scale and tablet captures: `.impeccable/review/compact-header/`.
 Press animation uses Compose spring state and system animation scaling; physical
 frame pacing, TalkBack and hardware microphone behavior were not measured.
+
+## Quiet clarity / Apple Design reset
+
+Rebuilt theme, typography, home control, navigation treatment, computer rows,
+mode choices, editors, note/reminder groups and empty states. Shared controls live
+in `ui/Controls.kt`; networking, storage and recording contracts are unchanged.
+
+`./gradlew :app:assembleDebug :app:lintDebug :core:test :app:connectedDebugAndroidTest`
+passes. Both UI tests pass: spoken draft/mode/target guard across navigation and
+shared draft edits across activity recreation. The Notes heading assertion now
+matches “Your notes”. No new dependencies were added.
+
+Native emulator captures: `.impeccable/review/quiet-clarity/`, covering home, anchored
+menu, Compose, computers, Inbox, Notes, dark home at 1.3 font scale and tablet home.
+These are unpaired empty states, not proof of physical-device operation. Speak is
+intentionally disabled until a computer is selected. Status icons follow the system
+theme and remain legible on both canvases. Hardware performance, TalkBack and battery
+behavior remain unmeasured; no independent visual-review verdict is claimed.

@@ -23,11 +23,11 @@ import dev.neyra.companion.CompanionState
     var expanded by remember { mutableStateOf(false) }
     Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-        Text("neyra", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
-        Spacer(Modifier.width(16.dp))
-        Box(Modifier.widthIn(max = 280.dp).weight(1f, fill = false)) {
+        Text("neyra", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+        Spacer(Modifier.width(12.dp))
+        Box(Modifier.widthIn(max = 250.dp).weight(1f, fill = false)) {
             Surface(shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.10f),
+                color = MaterialTheme.colorScheme.surfaceContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer) {
                 Row(Modifier.clickable(enabled = !state.recording && !state.busy, role = Role.Button,
                     onClickLabel = "Select computer", onClick = { expanded = !expanded })
@@ -54,16 +54,16 @@ import dev.neyra.companion.CompanionState
     val scale by animateFloatAsState(if (pressed) 0.96f else 1f,
         animationSpec = spring(dampingRatio = 1f, stiffness = 700f), label = "Speak press")
     val enabled = state.selected != null && !state.busy
-    Box(Modifier.fillMaxWidth().padding(top = 64.dp, bottom = 32.dp), contentAlignment = Alignment.Center) {
-        Surface(shape = CircleShape,
+    Box(Modifier.fillMaxWidth().padding(top = 112.dp, bottom = 64.dp), contentAlignment = Alignment.Center) {
+        Surface(shape = androidx.compose.foundation.shape.RoundedCornerShape(48.dp),
             color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh,
             contentColor = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-            shadowElevation = if (enabled && !pressed) 6.dp else 0.dp,
-            modifier = Modifier.sizeIn(minWidth = 176.dp, minHeight = 176.dp).graphicsLayer { scaleX = scale; scaleY = scale }) {
+            shadowElevation = if (enabled && !pressed) 2.dp else 0.dp,
+            modifier = Modifier.sizeIn(minWidth = 184.dp, minHeight = 184.dp).graphicsLayer { scaleX = scale; scaleY = scale }) {
             Column(Modifier.clickable(enabled = enabled, role = Role.Button, interactionSource = interaction,
                 indication = null, onClick = speak).padding(28.dp), horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center) {
-                Icon(if (state.recording) Icons.Outlined.Stop else Icons.Outlined.Mic, null, Modifier.size(44.dp))
+                Icon(if (state.recording) Icons.Outlined.Stop else Icons.Outlined.Mic, null, Modifier.size(52.dp))
                 Spacer(Modifier.height(14.dp))
                 Text(if (state.recording) "Stop recording" else "Speak to Neyra", style = MaterialTheme.typography.labelLarge)
             }
