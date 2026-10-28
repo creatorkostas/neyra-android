@@ -12,7 +12,7 @@ import dev.neyra.companion.CompanionState
     var query by rememberSaveable { mutableStateOf("") }
     var deleting by remember { mutableStateOf<String?>(null) }
     var showAllQueued by rememberSaveable { mutableStateOf(false) }
-    Text("Your notes, with you.", style = MaterialTheme.typography.headlineLarge)
+    Text("Worth keeping.", style = MaterialTheme.typography.headlineLarge)
     Text("Search recent cached notes from your paired computers, even offline. Long notes are cached as excerpts.", style = MaterialTheme.typography.bodyLarge)
     OutlinedTextField(query, { query = it }, label = { Text("Search notes") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
     val queuedMatches = state.outbox.filter { query.isBlank() || it.text.contains(query, true) || (it.kind == "AUDIO" && "voice note".contains(query, true)) }

@@ -11,3 +11,10 @@ Capture adds local recording, desktop transcription, conversation replies with
 phone playback, and Once/Daily/Weekly reminder choices. Computers adds QR scanning;
 Inbox adds recurring-state labels and Stop repeating. Preserve target continuity,
 editable shared/transcribed text, explicit queue consent and offline-state truth.
+
+## Appearance redesign
+
+User requests a stunning appearance beyond default Compose, with speed and
+privacy preserved, and delegates direction choice. Forest connection replaces
+the prior blue identity; see direction.md. Keep all destinations, review guards,
+original-target ownership, disclosure and accessibility behavior.

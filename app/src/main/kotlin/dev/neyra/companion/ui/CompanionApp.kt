@@ -1,6 +1,7 @@
 package dev.neyra.companion.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -27,12 +28,6 @@ import dev.neyra.companion.core.*
 import java.text.DateFormat
 import java.util.Date
 
-private val Light = lightColorScheme(primary = Color(0xFF394A75), onPrimary = Color.White,
-    primaryContainer = Color(0xFFDCE2F9), onPrimaryContainer = Color(0xFF162447),
-    background = Color(0xFFFAF9F6), secondaryContainer = Color(0xFFDCE2F0), onSecondaryContainer = Color(0xFF253454), surface = Color(0xFFFAF9F6), onSurface = Color(0xFF1B2335), secondary = Color(0xFF565F71))
-private val Dark = darkColorScheme(primary = Color(0xFFBAC7EF), onPrimary = Color(0xFF223259),
-    primaryContainer = Color(0xFF394A75), onPrimaryContainer = Color(0xFFDCE2F9),
-    background = Color(0xFF151922), secondaryContainer = Color(0xFF35425E), onSecondaryContainer = Color(0xFFDCE2F0), surface = Color(0xFF151922), onSurface = Color(0xFFE9EDF5), secondary = Color(0xFFBDC8DC))
 private enum class Destination(val label: String, val icon: ImageVector) {
     CAPTURE("Capture", Icons.Outlined.Mic), DEVICES("Computers", Icons.Outlined.Computer), INBOX("Inbox", Icons.Outlined.Notifications), NOTES("Notes", Icons.Outlined.Notes)
 }
@@ -53,7 +48,7 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable fun CompanionApp(model: CompanionViewModel, onSpeak: ((String) -> Unit) -> Unit, onNotifications: () -> Unit, onScan: () -> Unit = {}, onRead: (String) -> Unit = {}, onStopSpeech: () -> Unit = {}) {
-    MaterialTheme(colorScheme = if (isSystemInDarkTheme()) Dark else Light) {
+    NeyraTheme {
         val state by model.state.collectAsStateWithLifecycle()
         val candidates by model.candidates.collectAsStateWithLifecycle()
         val discoveryError by model.discoveryError.collectAsStateWithLifecycle()
@@ -78,26 +73,26 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
         LaunchedEffect(state.message) { state.message?.let { snackbar.showSnackbar(it); model.message(null) } }
         BoxWithConstraints {
             val wide = maxWidth >= 600.dp
-            Row(Modifier.fillMaxSize()) {
-                if (wide) NavigationRail(Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Vertical))) {
+            Row(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primaryContainer)) {
+                if (wide) NavigationRail(Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Vertical)), containerColor = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer) {
                     Spacer(Modifier.height(20.dp))
                     Destination.entries.forEach { item -> NavigationRailItem(selected = destination == item,
-                        onClick = { destination = item }, icon = { Icon(item.icon, null) }, label = { Text(item.label) }) }
+                        onClick = { destination = item }, icon = { Icon(item.icon, null) }, label = { Text(item.label) }, colors = NavigationRailItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.onPrimary, selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer, indicatorColor = MaterialTheme.colorScheme.primary, unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer, unselectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer)) }
                 }
                 Scaffold(modifier = Modifier.weight(1f),
-                    topBar = { TopAppBar(title = { Text("Neyra") }, actions = {
+                    topBar = { TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer, titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer, actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer), title = { Text("neyra", style = MaterialTheme.typography.titleLarge) }, actions = {
                         IconButton(onClick = model::refresh, enabled = !state.busy) { Icon(Icons.Outlined.Refresh, "Sync computers") }
                     }) },
                     snackbarHost = { SnackbarHost(snackbar) },
-                    bottomBar = { if (!wide) NavigationBar { Destination.entries.forEach { item ->
+                    bottomBar = { if (!wide) NavigationBar(containerColor = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer) { Destination.entries.forEach { item ->
                         NavigationBarItem(selected = destination == item, onClick = { destination = item },
-                            icon = { Icon(item.icon, null) }, label = { Text(item.label) })
+                            icon = { Icon(item.icon, null) }, label = { Text(item.label) }, colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.onPrimary, selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer, indicatorColor = MaterialTheme.colorScheme.primary, unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer, unselectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer))
                     } } },
                 ) { padding ->
                     Box(Modifier.padding(padding).fillMaxSize(), contentAlignment = Alignment.TopCenter) {
                     screenState.SaveableStateProvider(destination.name) {
                     Column(Modifier.widthIn(max = 720.dp).fillMaxWidth().imePadding().verticalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        .padding(horizontal = 24.dp, vertical = 20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         if (state.busy) {
                             LinearProgressIndicator(Modifier.fillMaxWidth())
                             TextButton(onClick = { model.cancelOperation(); onStopSpeech() }) { Text("Stop request") }
@@ -148,17 +143,8 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
             withFrameNanos { }; draftView.bringIntoView()
         }
     }
-    Text("Your voice,\nyour computer.", style = MaterialTheme.typography.headlineLarge)
-    Text("Capture a thought or ask Neyra to help.", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-    Surface(color = MaterialTheme.colorScheme.primaryContainer, shape = MaterialTheme.shapes.medium) {
-        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(state.selected?.name ?: "Choose your computer", style = MaterialTheme.typography.titleLarge)
-            Text(if (state.selected == null) "Pair once on your local network to get started."
-                else if (state.online) "Connected on your local network" else "Not connected · check Wi-Fi and desktop Neyra",
-                style = MaterialTheme.typography.bodyMedium)
-            TextButton(onClick = onComputers) { Text(if (state.selected == null) "Find computers" else "Change computer") }
-        }
-    }
+    Text("A thought.\nA little further.", style = MaterialTheme.typography.headlineLarge)
+    ConnectionPanel(state, onComputers)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { CaptureMode.entries.forEach { item ->
         FilterChip(selected = item == mode, onClick = { mode = item }, label = { Text(item.label) }, enabled = !state.busy)
     } }
@@ -174,12 +160,12 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
             }
         }
     }
-    FilledTonalButton(onClick = {
+    Button(onClick = {
         onStopSpeech()
         if (!state.recording) speechTarget = state.selectedId
         onSpeak { result -> text = result }
-    }, enabled = state.selected != null && !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp)) {
-        Icon(Icons.Outlined.Mic, null); Spacer(Modifier.width(12.dp)); Text(if (state.recording) "Stop recording" else "Speak to Neyra", style = MaterialTheme.typography.titleMedium)
+    }, enabled = state.selected != null && !state.busy, modifier = Modifier.fillMaxWidth().heightIn(min = 76.dp)) {
+        Icon(if (state.recording) Icons.Outlined.Stop else Icons.Outlined.Mic, null, Modifier.size(28.dp)); Spacer(Modifier.width(12.dp)); Text(if (state.recording) "Stop recording" else "Speak to Neyra", style = MaterialTheme.typography.titleMedium)
     }
     Text("Records up to 60 seconds on this phone. Your selected computer transcribes with its Neyra speech engine. Audio stays private until you choose Transcribe or Queue.",
         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -200,7 +186,7 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
     }
     OutlinedTextField(value = text, onValueChange = { if (it.length <= 8000) { text = it; speechTarget = null } },
         label = { Text(if (mode == CaptureMode.REMINDER) "Remind me in 10 minutes to…" else "Speak or type your request") },
-        modifier = Modifier.fillMaxWidth().bringIntoViewRequester(draftView), minLines = 4, maxLines = 10, enabled = !state.busy)
+        modifier = Modifier.fillMaxWidth().bringIntoViewRequester(draftView), minLines = 3, maxLines = 10, enabled = !state.busy)
     if (speechTarget != null && speechTarget != state.selectedId) Text("Computer changed after recording. Select the original computer or edit the text before sending.", color = MaterialTheme.colorScheme.error)
     Button(onClick = { val sent = text; model.send(mode, sent, { if (text == sent) { text = ""; speechTarget = null } }, repeat) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
         enabled = text.isNotBlank() && state.selected != null && !state.busy && (speechTarget == null || speechTarget == state.selectedId)) {
@@ -239,7 +225,7 @@ private class CaptureDraft(modeValue: String = "NOTE", textValue: String = "", t
 }
 
 @Composable private fun Inbox(state: CompanionState, onAction: (Reminder, String) -> Unit, onNotifications: () -> Unit) {
-    Text("With you,\naway from your desk.", style = MaterialTheme.typography.headlineLarge)
+    Text("Right on time.", style = MaterialTheme.typography.headlineLarge)
     Text("Reminders from your paired computers.", style = MaterialTheme.typography.bodyLarge)
     OutlinedButton(onClick = onNotifications) { Icon(Icons.Outlined.Notifications, null); Spacer(Modifier.width(8.dp)); Text("Notification settings") }
     Text("Syncs while open; background refresh is periodic. Android may delay alerts. Synced reminders remain available offline; new changes need your local network.", style = MaterialTheme.typography.bodySmall)

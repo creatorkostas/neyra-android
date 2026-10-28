@@ -1,45 +1,42 @@
-# Companion direction contract
+# Forest connection — Android redesign
 
-THESIS: An Android remote for the user's own Neyra computers. Selecting the
-computer is the first meaningful act; speaking captures reviewed text for it.
+THESIS: A private thought travels from this phone to one chosen computer.
+Capture leads; the destination remains unmistakable.
 
-OWN-WORLD: Expand the existing Neyra ink / warm-surface visual identity through
-native Material 3 color roles and system type. This is an Operate surface;
-Android navigation, accessibility and honest state take precedence over visual
-novelty. User confirmed Kotlin/Compose, local-network first, direct UI building.
+OWN-WORLD: Contemporary Nordic cultural identity programs: deep forest shell,
+lichen-tinted working surfaces, citron selection, self-hosted Manrope typography.
+An Operate screen takes type, palette, density and one signature only; navigation
+and controls stay native Android Material 3. The previous blue/warm identity is
+replaced under the user's explicit request for a stunning, non-generic app.
 
-STORY: First pair in Computers, then select the destination, then capture a note,
-reminder or supported command. Inbox brings synced reminders to the phone.
-No demonstration computers are bundled. Screenshots use a labeled synthetic host.
+STORY: Open Capture, recognize the destination and its connection state, choose
+the intent, record or type, review, and send. Computers handles trust; Inbox
+handles reminders; Notes handles retained thoughts and unsent work.
 
-FIRST VIEWPORT: Capture heading, explicit selected/unpaired computer panel,
-mode chips, primary Speak button, recognition privacy copy and editable text.
-The send action is below the draft; errors preserve the draft, success clears it.
-No invented statistics, oversized marketing artwork, or animation gates.
+FIRST VIEWPORT: Forest app bar; compact two-line capture heading; selected
+computer with phone-to-computer connection path; modes; substantial speech
+action. Supporting privacy copy and editable draft continue below. Avoid the
+previous large introduction competing with the task.
 
-FORM: Three destinations. Phone bottom navigation changes to a tablet rail.
-Reading/form width is capped at 720dp and centered on wide screens. Material
-headline/title/body/label roles, 24dp horizontal space, 16dp group spacing,
-48dp touch targets. Light and dark themes, system font scale, IME/system insets.
+FORM: seed:08bb51103dbaae08, grounded candidate 5, selected by the builder after
+the user explicitly delegated visual-direction choice. Code-first confirmed.
+Seven candidates: independent record-sleeve identities; Swiss walking-route
+wayfinding; contemporary bookbinding; architecture-journal grids; Nordic cultural
+identity programs; ceramic-studio catalogs; atlas typography. Candidate 5 owns
+this redesign. No approved image comp applies.
 
-SIGNATURE INTERACTION: Select computer → speak → review → send to that computer.
-A target change after voice input blocks sending until the text is reviewed/edited
-or the original computer is selected. Native state/press transitions honor system
-motion settings; no custom entrance animation.
+Challengers weighed on audience identification and task clarity: Metro is
+competitive on immediate scanning but less appropriate than native navigation;
+Saville is competitive on distinctiveness but coded labels harm clarity.
+Labanotation, character goods, ticket wallet and split-flap are declined on both
+axes for this everyday capture task. Kept discipline: Labanotation's relational
+clarity, character catalog's consistent identity across destinations, ticket
+wallet's explicit destination ownership, and split-flap's honest state changes.
+These raise clarity and consistency, not decorative costumes.
 
-Workflow: code-led by explicit user choice. No approved image comp. No web
-detector ran because this is native Compose. Evidence is Android 15 emulator
-screenshots, including tablet-sized configuration, dark theme and 1.3 font scale.
+SIGNATURE: A short geometric phone-to-computer path inside the destination panel.
+Solid means connected; broken means disconnected, always paired with explicit
+state text. It is state-bearing code geometry, never a fabricated live waveform.
 
-## Confirmed 0.2 extension
-
-Keep the existing world. Four destinations now include Notes for cached search
-and the durable outbox. Conversation answers precede the follow-up composer;
-phone offline TTS reads completed answers. Recording remains local until explicit
-Transcribe or Queue, with a visible original destination and persisted draft.
-Computers adds single-use QR scanning; Inbox adds recurrence and Stop repeating.
-Sharing opens an editable draft. Capture draft ownership is hoisted so asynchronous
-results survive navigation, and each destination keeps its own scroll state.
-Native captures in review/expanded are authoritative for this extension. They
-use synthetic service responses; hardware speech/camera/TTS/widget checks remain
-explicitly unverified. Desktop Home also exposes the companion action at 1000px.
+PERFORMANCE: Bundled font, flat role-based colors, no fetched media, no perpetual
+animation or decorative blur. All existing asynchronous workflows stay intact.

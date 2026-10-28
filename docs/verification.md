@@ -29,3 +29,18 @@ synthetic desktop, notes and provider responses. Earlier screenshots document 0.
 Impeccable finish review: `ship`. All eleven expanded captures were inspected,
 including corrected Capture/share views and a scrolled capture-controls view.
 No material UI fixes remain from that review.
+
+## Forest connection appearance redesign
+
+The replacement visual system uses bundled Manrope, forest/citron role colors,
+a state-bearing phone/computer path, and native adaptive navigation. Debug build,
+lint, core tests and both app instrumentation regressions pass after the change.
+The share test's expected Notes heading was updated for the new copy. No network,
+audio, persistence or provider protocol behavior was changed. No latency or battery
+benchmark was performed. Current emulator captures are in
+`.impeccable/review/forest/` (phone, scrolled controls, destinations, dark theme at
+1.3 font scale and tablet).
+
+Impeccable full review found one tablet status-bar contrast issue. A forest
+inset/rail backdrop corrected it; the exact tablet recapture was scored resolved
+with disposition `ship` for that fix. The final inset change also passes build/lint.

@@ -25,7 +25,7 @@ class ShareCaptureTest {
         compose.onNode(hasSetTextAction()).performTextReplacement("Synthetic shared launch note edited")
         compose.onNodeWithText("Notes").performClick()
         activityRule.scenario.recreate()
-        compose.onNodeWithText("Your notes, with you.").assertExists()
+        compose.onNodeWithText("Worth keeping.").assertExists()
         compose.onNodeWithText("Capture").performClick()
         compose.onNodeWithText("Synthetic shared launch note edited").assertExists()
         val app = compose.activity.application as NeyraApplication
